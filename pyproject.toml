@@ -27,7 +27,7 @@ cra = "cra_sentinel.cli:main"
 cra-sentinel = "cra_sentinel.cli:main"
 
 [project.urls]
-Homepage = "https://tomvallat.github.io/cra-sentinel/"
+Homepage = "https://cra.blinkweb.fr/"
 Repository = "https://github.com/tomvallat/cra-sentinel"
 Issues = "https://github.com/tomvallat/cra-sentinel/issues"
 
