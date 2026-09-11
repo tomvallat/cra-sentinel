@@ -1,231 +1,220 @@
-<title>CRA Sentinel</title>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRA Sentinel — conformité au Cyber Resilience Act</title>
+<meta name="description" content="Scanner de conformité au règlement (UE) 2024/2847 : inventaire SBOM, détection de l'exploitation active, et preuve recevable au titre de l'Article 14. Sans dépendance.">
+<meta property="og:title" content="CRA Sentinel">
+<meta property="og:description" content="Le CRA ne vous demande pas d'être invulnérable. Il vous demande de pouvoir montrer vos décisions.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tomvallat.github.io/cra-sentinel/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;450;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
+/* ------------------------------------------------------------------
+   The page takes the register of the instrument it serves: an
+   annotated statute. Narrow measure, references in the margin,
+   hairline rules, one red reserved for the Article 14 signal.
+   ------------------------------------------------------------------ */
 :root{
-  --paper:#f1f3f4; --surface:#ffffff; --surface-2:#e9edee;
-  --ink:#0d1b24; --ink-2:#41535c; --ink-3:#5d6b73;
-  --rule:#d3dade; --rule-2:#e4e9eb;
-  --accent:#0f4c5c; --accent-soft:#dde9ec;
-  --signal:#b3261e; --signal-soft:#f8e9e7;
-  --term-bg:#0b1418; --term-ink:#c9d6db;
-  --display:"IBM Plex Sans Condensed",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-  --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --paper:#faf8f4; --plate:#14120f; --plate-ink:#d5cec2;
+  --ink:#1a1714; --ink-2:#4e473e; --ink-3:#807870;
+  --rule:#dcd5c7; --rule-2:#eae5da;
+  --signal:#9a2b18;
+  --serif:"Source Serif 4","Iowan Old Style",Palatino,Georgia,"Times New Roman",serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --rail:104px;
+  --rail:168px; --gap:44px;
 }
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#0a1116; --surface:#111b21; --surface-2:#16232a;
-    --ink:#e3eaed; --ink-2:#9db0b8; --ink-3:#7b8f98;
-    --rule:#22333c; --rule-2:#1a2830;
-    --accent:#5fb3c9; --accent-soft:#12303a;
-    --signal:#ff7d6e; --signal-soft:#2b1310;
-    --term-bg:#060c0f; --term-ink:#c9d6db;
+  :root{
+    --paper:#14120f; --plate:#0c0a08; --plate-ink:#cfc8bc;
+    --ink:#eae5db; --ink-2:#a9a196; --ink-3:#837b71;
+    --rule:#332e27; --rule-2:#26221c;
+    --signal:#e0745c;
   }
-}
-:root[data-theme="dark"]{
-  --paper:#0a1116; --surface:#111b21; --surface-2:#16232a;
-  --ink:#e3eaed; --ink-2:#9db0b8; --ink-3:#7b8f98;
-  --rule:#22333c; --rule-2:#1a2830;
-  --accent:#5fb3c9; --accent-soft:#12303a;
-  --signal:#ff7d6e; --signal-soft:#2b1310;
-  --term-bg:#060c0f; --term-ink:#c9d6db;
 }
 
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);
-  font-family:var(--body);font-size:16px;line-height:1.6;
-  -webkit-font-smoothing:antialiased}
-h1,h2,h3{margin:0;font-family:var(--display);font-weight:700;line-height:1.06;
-  letter-spacing:-.014em;text-wrap:balance}
+  font-family:var(--serif);font-size:17px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.012em;text-wrap:balance}
 p{margin:0}
-a{color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
 
-.wrap{max-width:1120px;margin:0 auto;padding-inline:24px}
+.doc{max-width:1020px;margin:0 auto;padding-inline:24px}
 
-/* ---- clause rail: the page is structured like a normative text ---- */
-.clause{border-top:1px solid var(--rule);padding-block:64px}
-.clause-inner{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:40px}
-.clause-ref{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
-  color:var(--ink-3);text-transform:uppercase;padding-top:6px;line-height:1.7}
-.clause-ref b{display:block;font-family:var(--display);font-size:30px;font-weight:700;
-  letter-spacing:-.02em;color:var(--accent);margin-bottom:6px;line-height:1}
-.clause-body{max-width:66ch}
-h2{font-size:clamp(28px,4.2vw,40px);margin-bottom:16px}
-.clause-body>p{color:var(--ink-2);font-size:17px}
-.clause-body>p+p{margin-top:14px}
+/* two-column apparatus: references hang in the margin */
+.row{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--gap)}
+.rail{font-family:var(--mono);font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);line-height:1.7;padding-top:.5em}
+.rail b{display:block;font-family:var(--serif);font-size:17px;font-weight:600;
+  color:var(--ink);letter-spacing:0;text-transform:none;margin-bottom:6px}
+.col{max-width:64ch}
+.col.wide{max-width:78ch}
 
-/* ---- masthead ---- */
-.masthead{display:flex;align-items:center;justify-content:space-between;gap:20px;
-  padding-block:20px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);
-  font-size:15px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
-.logo-mark{width:26px;height:26px;background:var(--accent);color:var(--surface);
-  display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:600;
-  letter-spacing:0}
-:root[data-theme="dark"] .logo-mark,
-:root:not([data-theme="light"]) .logo-mark{color:#0a1116}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .logo-mark{color:#fff}}
-.masthead-meta{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);
-  letter-spacing:.04em}
+/* ---------- masthead ---------- */
+.masthead{display:flex;justify-content:space-between;align-items:baseline;
+  gap:18px;flex-wrap:wrap;padding-block:28px 13px}
+.masthead .name{font-weight:600;font-size:16px;letter-spacing:.23em;
+  text-transform:uppercase}
+.masthead .meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);
+  letter-spacing:.05em}
+.masthead a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule)}
+.masthead a:hover{color:var(--signal);border-bottom-color:var(--signal)}
+.dbl{border-top:3px double var(--rule)}
 
-/* ---- hero ---- */
-.hero{padding-block:56px 68px}
-.hero h1{font-size:clamp(40px,7.2vw,76px);letter-spacing:-.028em;margin-bottom:22px}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero-lede{font-size:19px;line-height:1.5;color:var(--ink-2);max-width:56ch;
-  margin-bottom:30px}
-.hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:44px}
-.cmd{display:inline-flex;align-items:center;gap:12px;background:var(--surface);
-  border:1px solid var(--rule);padding:11px 16px;font-family:var(--mono);font-size:14px}
-.cmd span{color:var(--ink-3)}
-.btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);
-  color:var(--surface);border:1px solid var(--accent);padding:12px 20px;
-  font-family:var(--body);font-size:14.5px;font-weight:600;text-decoration:none;
-  transition:opacity .15s}
-:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#0a1116}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn{color:#fff}}
-.btn:hover{opacity:.86}
-.btn-ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
-:root[data-theme="dark"] .btn-ghost,
-:root:not([data-theme="light"]) .btn-ghost{color:var(--ink)}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn-ghost{color:var(--ink)}}
+/* ---------- opening statement ---------- */
+.hero{padding-block:56px 0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:26px}
+.hero h1{font-size:clamp(32px,5.4vw,55px);line-height:1.07;letter-spacing:-.021em;
+  max-width:16ch;margin-bottom:22px}
+.lede{font-size:19px;line-height:1.56;color:var(--ink-2);max-width:57ch}
+.lede+.lede{margin-top:13px}
+.lede strong{color:var(--ink);font-weight:600}
 
-/* ---- the legal fact strip ---- */
-.fact{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;
-  border:1px solid var(--signal);background:var(--signal-soft);padding:20px 24px}
-.fact-date{font-family:var(--display);font-size:15px;font-weight:700;color:var(--signal);
-  letter-spacing:.04em;text-transform:uppercase;line-height:1.25;
-  border-right:1px solid color-mix(in srgb,var(--signal) 35%,transparent);
-  padding-right:22px;white-space:nowrap}
-.fact-date b{display:block;font-size:26px;letter-spacing:-.01em}
-.fact p{font-size:15px;color:var(--ink-2);line-height:1.5}
-.fact strong{color:var(--ink);font-weight:600}
+.install{display:inline-flex;align-items:baseline;gap:13px;font-family:var(--mono);
+  font-size:14px;border:1px solid var(--ink);padding:12px 17px;margin-top:32px;
+  color:var(--ink)}
+.install i{font-style:normal;color:var(--ink-3)}
+.links{margin-top:15px;font-family:var(--mono);font-size:12px;letter-spacing:.03em;
+  color:var(--ink-3)}
+.links a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule)}
+.links a:hover{color:var(--signal);border-bottom-color:var(--signal)}
+.links em{font-style:normal;margin-inline:9px;color:var(--rule)}
 
-/* ---- terminal ---- */
-.term{background:var(--term-bg);border:1px solid var(--rule);margin-top:28px;
+/* ---------- the date in force ---------- */
+.force{margin-top:52px;border-top:1px solid var(--signal);
+  border-bottom:1px solid var(--rule);padding-block:23px}
+.force .rail{padding-top:.15em}
+.force .rail b{font-family:var(--mono);font-size:21px;font-weight:500;
+  color:var(--signal);font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+  margin-bottom:3px}
+.force .rail i{font-style:normal;color:var(--signal)}
+.force p{font-size:16px;color:var(--ink-2);line-height:1.55}
+.force strong{color:var(--ink);font-weight:600}
+
+/* ---------- plate ---------- */
+figure{margin:44px 0 0}
+.plate{background:var(--plate);border:1px solid var(--rule);padding:22px 24px;
   overflow-x:auto}
-.term-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;
-  border-bottom:1px solid rgba(255,255,255,.07)}
-.term-bar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
-.term-bar span{margin-left:6px;font-family:var(--mono);font-size:11px;
-  color:rgba(255,255,255,.34);letter-spacing:.05em}
-.term pre{margin:0;padding:20px 22px 24px;font-family:var(--mono);font-size:12.5px;
-  line-height:1.72;color:var(--term-ink);white-space:pre}
-.term .c{color:#63757e}
-.term .r{color:#ff7d6e}
-.term .g{color:#6fd6a2}
-.term .y{color:#e5c264}
-.term .w{color:#e9f1f4;font-weight:500}
-.term .inv{background:#b3261e;color:#fff;font-weight:600}
+.plate pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.72;
+  color:var(--plate-ink);white-space:pre}
+.plate .c{color:#6b645b}
+.plate .r{color:#e0745c}
+.plate .g{color:#7bbd92}
+.plate .y{color:#cfa85e}
+.plate .w{color:#f0ebe2;font-weight:500}
+.plate .inv{background:#9a2b18;color:#fff;font-weight:500}
+figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:12px}
 
-/* ---- generic pieces ---- */
-.note{border-left:2px solid var(--accent);background:var(--surface);
-  padding:18px 22px;margin-top:26px}
-.note.sig{border-left-color:var(--signal)}
-.note h3{font-family:var(--body);font-size:15.5px;font-weight:600;margin-bottom:6px}
-.note.sig h3{color:var(--signal)}
-.note p{font-size:15px;color:var(--ink-2)}
+/* ---------- sections ---------- */
+.sec{border-top:1px solid var(--rule);padding-block:54px}
+.sec h2{font-size:clamp(24px,3.2vw,31px);line-height:1.19;margin-bottom:19px}
+.col>p{color:var(--ink-2)}
+.col>p+p{margin-top:13px}
+.col strong{color:var(--ink);font-weight:600}
+code{font-family:var(--mono);font-size:.86em}
 
-.timeline{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--rule-2)}
-.timeline li{display:grid;grid-template-columns:126px 1fr;gap:20px;padding:15px 0;
-  border-bottom:1px solid var(--rule-2);align-items:start}
-.timeline .when{font-family:var(--mono);font-size:13px;font-weight:500;
-  font-variant-numeric:tabular-nums}
-.timeline .now .when{color:var(--signal)}
-.timeline .what{font-size:15px;color:var(--ink-2)}
-.timeline .what b{color:var(--ink);font-weight:600}
+.aside{margin-top:30px;padding-top:17px;border-top:1px solid var(--rule-2)}
+.aside h3{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--signal);margin-bottom:9px}
+.aside p{font-size:16px;color:var(--ink-2);line-height:1.56}
+.aside strong{color:var(--ink);font-weight:600}
 
-.formats{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));
-  gap:1px;background:var(--rule-2);border:1px solid var(--rule-2);margin-top:28px}
-.format{background:var(--surface);padding:22px}
-.format .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--accent);margin-bottom:9px}
-.format h3{font-family:var(--body);font-size:16px;font-weight:600;margin-bottom:7px;
-  letter-spacing:0}
-.format p{font-size:14.5px;color:var(--ink-3);line-height:1.5}
+/* ruled lists, in place of cards */
+.dl{margin:28px 0 0;border-top:1px solid var(--rule-2)}
+.dl>div{display:grid;grid-template-columns:182px minmax(0,1fr);gap:24px;
+  padding:13px 0;border-bottom:1px solid var(--rule-2);align-items:baseline}
+.dl dt{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink)}
+.dl dt small{display:block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;margin-bottom:3px}
+.dl dd{margin:0;font-size:15.5px;color:var(--ink-2);line-height:1.55}
+.dl .now dt{color:var(--signal)}
 
-.cmds{margin-top:26px;border-top:1px solid var(--rule-2)}
-.cmds div{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:12px 0;
-  border-bottom:1px solid var(--rule-2);align-items:baseline}
-.cmds code{font-family:var(--mono);font-size:13.5px;color:var(--accent);font-weight:500}
-.cmds p{font-size:14.5px;color:var(--ink-2)}
+table{width:100%;border-collapse:collapse;margin-top:28px;font-size:15.5px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:500;
+  padding:0 18px 10px 0;border-bottom:1px solid var(--rule)}
+td{padding:11px 18px 11px 0;border-bottom:1px solid var(--rule-2);
+  color:var(--ink-2);vertical-align:top}
+td:first-child,td:last-child{color:var(--ink)}
+.tw{overflow-x:auto}
 
-.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;
-  margin-top:28px}
-.who h3{font-family:var(--body);font-size:15.5px;font-weight:600;margin-bottom:8px;
-  letter-spacing:0;padding-bottom:8px;border-bottom:2px solid var(--accent)}
-.who p{font-size:14.5px;color:var(--ink-2)}
-.who ul{margin:10px 0 0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
-.who li{margin-bottom:5px}
+.who{margin-top:30px}
+.who>div{padding-block:17px;border-top:1px solid var(--rule-2)}
+.who h3{font-size:17px;margin-bottom:6px}
+.who p{font-size:15.5px;color:var(--ink-2)}
+.who ul{margin:9px 0 0;padding-left:18px;font-size:15.5px;color:var(--ink-2)}
+.who li{margin-bottom:4px}
 .who li::marker{color:var(--ink-3)}
 
-.compare{width:100%;border-collapse:collapse;margin-top:26px;font-size:14.5px}
-.compare th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--ink-3);font-weight:500;padding:0 14px 10px 0;
-  border-bottom:1px solid var(--rule)}
-.compare td{padding:11px 14px 11px 0;border-bottom:1px solid var(--rule-2);
-  color:var(--ink-2);vertical-align:top}
-.compare td:last-child{color:var(--ink);font-weight:450}
-.compare tr td:first-child{color:var(--ink)}
+/* ---------- colophon ---------- */
+.colophon{border-top:3px double var(--rule);margin-top:54px;padding-block:26px 56px;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink-3);line-height:1.95;
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.colophon a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule)}
+.colophon a:hover{color:var(--signal);border-bottom-color:var(--signal)}
 
-.closing{border-top:1px solid var(--rule);padding-block:76px 40px;text-align:center}
-.closing h2{font-size:clamp(26px,4vw,38px);margin-bottom:14px}
-.closing p{color:var(--ink-2);max-width:52ch;margin:0 auto 26px;font-size:17px}
-.closing .hero-actions{justify-content:center;margin-bottom:0}
-
-footer{border-top:1px solid var(--rule-2);padding-block:26px 44px;
-  font-family:var(--mono);font-size:11.5px;color:var(--ink-3);line-height:1.8;
-  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
-
-@media (max-width:760px){
-  .clause-inner{grid-template-columns:1fr;gap:14px}
-  .clause-ref{display:flex;align-items:baseline;gap:10px;padding-top:0}
-  .clause-ref b{margin-bottom:0;font-size:22px}
-  .fact{grid-template-columns:1fr;gap:14px}
-  .fact-date{border-right:none;padding-right:0;
-    border-bottom:1px solid color-mix(in srgb,var(--signal) 35%,transparent);
-    padding-bottom:12px}
-  .timeline li,.cmds div{grid-template-columns:1fr;gap:5px}
-  .term pre{font-size:11px}
+@media (max-width:820px){
+  :root{--gap:0px}
+  .row{grid-template-columns:1fr;gap:12px}
+  .rail{padding-top:0;display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+  .rail b{margin-bottom:0}
+  .force .rail b{font-size:18px}
+  .dl>div{grid-template-columns:1fr;gap:4px}
+  .sec{padding-block:42px}
+  .plate pre{font-size:11px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+</head>
+<body>
 
-<div class="wrap">
-  <header class="masthead">
-    <div class="logo"><span class="logo-mark">CS</span> CRA Sentinel</div>
-    <div class="masthead-meta">Règlement (UE) 2024/2847 · <a href="https://github.com/tomvallat/cra-sentinel">Code source</a></div>
-  </header>
+<header class="doc">
+  <div class="masthead">
+    <div class="name">CRA Sentinel</div>
+    <div class="meta">Règlement (UE) 2024/2847 &middot; version 1.0.0 &middot;
+      <a href="https://github.com/tomvallat/cra-sentinel">code source</a></div>
+  </div>
+</header>
+<div class="dbl"></div>
+
+<main class="doc">
 
   <section class="hero">
-    <h1>Votre produit est-il<br>en règle avec le <em>CRA</em> ?</h1>
-    <p class="hero-lede">Un scanner qui inventorie vos composants, isole ceux qui sont
-      <strong>activement exploités</strong>, et produit les preuves qu'un auditeur accepte.
-      Sans dépendance, sans compte, sans télémétrie.</p>
+    <p class="eyebrow">Outil de conformité — produits comportant des éléments numériques</p>
+    <h1>Le CRA ne vous demande pas d'être invulnérable.</h1>
+    <p class="lede">Il vous demande de <strong>savoir</strong> ce que vous embarquez, de
+      le <strong>surveiller</strong>, de <strong>décider</strong> — et de pouvoir
+      <strong>montrer la décision</strong>.</p>
+    <p class="lede">C'est cette dernière partie que les scanners de vulnérabilités ne
+      couvrent pas. Un scan n'est pas une preuve. Une décision documentée en est une.</p>
 
-    <div class="hero-actions">
-      <span class="cmd"><span>$</span>pip install cra-sentinel</span>
-      <a class="btn" href="#demarrer">Lancer un premier scan</a>
-      <a class="btn btn-ghost" href="#quoi">Ce que ça fait</a>
-      <a class="btn btn-ghost" href="https://github.com/tomvallat/cra-sentinel">Code source</a>
+    <div class="install"><i>$</i>pip install cra-sentinel</div>
+    <p class="links">
+      <a href="https://github.com/tomvallat/cra-sentinel">Code source</a><em>·</em>
+      <a href="https://pypi.org/project/cra-sentinel/">PyPI</a><em>·</em>
+      Licence MIT<em>·</em>Sans dépendance tierce
+    </p>
+
+    <div class="force row">
+      <div class="rail"><b>11.09.2026</b><i>en vigueur</i></div>
+      <div class="col">
+        <p><strong>L'obligation de signalement de l'Article 14 s'applique.</strong>
+          Toute vulnérabilité activement exploitée dans un produit vendu dans l'Union doit
+          être signalée à l'ENISA et au CSIRT national sous 24 heures, avec notification
+          complète sous 72 heures et rapport final sous 14 jours. Cela vaut pour les
+          fabricants établis hors de l'UE, et pour les produits déjà commercialisés.</p>
+      </div>
     </div>
 
-    <div class="fact">
-      <div class="fact-date">En vigueur<b>11.09.2026</b></div>
-      <p><strong>L'obligation de signalement de l'Article 14 s'applique.</strong>
-        Toute vulnérabilité activement exploitée dans un produit vendu dans l'Union
-        doit être signalée à l'ENISA et au CSIRT national sous 24 heures, avec
-        notification complète sous 72 heures. Cela vaut aussi pour les fabricants
-        établis hors de l'UE, et pour les produits déjà commercialisés.</p>
-    </div>
-
-    <div class="term">
-      <div class="term-bar"><i></i><i></i><i></i><span>gateway-firmware</span></div>
-<pre>$ cra scan .
+    <figure>
+      <div class="plate"><pre>$ cra scan .
 
   <span class="r">████</span><span class="c">░░░░░░░░░░░░░░░░░░░░░░░░</span>  <span class="r w">14/100</span>  Grade E · Critical exposure
 
@@ -239,24 +228,20 @@ footer{border-top:1px solid var(--rule-2);padding-block:26px 44px;
     <span class="w">CVE-2021-45046</span>   CRITICAL   9.0   log4j-core 2.14.1   <span class="g">fix: 2.16.0</span> <span class="r">ransomware</span>
 
   <span class="c">24h early warning · 72h notification · 14d final report</span>
-  <span class="c">Draft one with:</span> <span class="y">cra notify CVE-2021-44228</span></pre>
-    </div>
+  <span class="c">Draft one with:</span> <span class="y">cra notify CVE-2021-44228</span></pre></div>
+      <figcaption>Fig. 1 — sortie de <code>cra scan</code> sur un firmware de démonstration</figcaption>
+    </figure>
   </section>
-</div>
 
-<!-- ─────────── clause 1 ─────────── -->
-<section class="clause" id="quoi">
-  <div class="wrap"><div class="clause-inner">
-    <div class="clause-ref"><b>01</b>Le principe</div>
-    <div class="clause-body">
-      <h2>Le CRA ne demande pas d'être invulnérable</h2>
-      <p>Il demande de <strong>savoir</strong> ce que vous embarquez, de le
-        <strong>surveiller</strong>, de <strong>décider</strong> — et de pouvoir
-        <strong>montrer la décision</strong>.</p>
-      <p>C'est cette dernière partie que les scanners de vulnérabilités ne couvrent pas.
-        Un scan n'est pas une preuve. Une décision documentée en est une.</p>
+  <section class="sec row">
+    <div class="rail"><b>§ 1</b>Le principe<br>Art. 14 · Annexe I</div>
+    <div class="col">
+      <h2>L'obligation porte sur la connaissance, pas sur l'absence de faille</h2>
+      <p>Le règlement admet parfaitement qu'un produit contienne des vulnérabilités. Ce
+        qu'il n'admet pas, c'est que le fabricant ne sache pas lesquelles, ne les
+        surveille pas, ou ne puisse pas produire la décision qu'il a prise.</p>
 
-      <div class="note sig">
+      <div class="aside">
         <h3>La distinction qui change tout</h3>
         <p>Un scan classique remonte 200 CVE indifférenciées. L'Article 14 ne se
           déclenche <strong>que</strong> sur l'exploitation active. CRA Sentinel croise
@@ -264,53 +249,29 @@ footer{border-top:1px solid var(--rule-2);padding-block:26px 44px;
           et n'annonce un délai réglementaire que sur cette intersection. Le reste est de
           la dette technique — pas une obligation de signalement.</p>
       </div>
-
-      <ul class="timeline">
-        <li class="now">
-          <span class="when">11 sept. 2026</span>
-          <span class="what"><b>Article 14 — en vigueur.</b> Signalement des
-            vulnérabilités activement exploitées : 24 h / 72 h / 14 j.</span>
-        </li>
-        <li>
-          <span class="when">11 juin 2027</span>
-          <span class="what">Évaluation de la conformité et organismes notifiés.</span>
-        </li>
-        <li>
-          <span class="when">11 déc. 2027</span>
-          <span class="what"><b>Application intégrale.</b> Exigences essentielles de
-            l'Annexe I, documentation technique, marquage CE.</span>
-        </li>
-      </ul>
     </div>
-  </div></div>
-</section>
+  </section>
 
-<!-- ─────────── clause 2 ─────────── -->
-<section class="clause">
-  <div class="wrap"><div class="clause-inner">
-    <div class="clause-ref"><b>02</b>Les livrables</div>
-    <div class="clause-body">
+  <section class="sec row">
+    <div class="rail"><b>§ 2</b>Les livrables<br>Annexe I Part. II</div>
+    <div class="col">
       <h2>Quatre formats normalisés, générés depuis un seul inventaire</h2>
       <p>Les composants sont résolus depuis huit écosystèmes — npm, PyPI, Go, Cargo,
         Maven, Composer, RubyGems, NuGet. Les fichiers de verrouillage priment sur les
         manifestes : le SBOM doit décrire ce qui est livré, pas ce qui a été demandé.</p>
 
-      <div class="formats">
-        <div class="format"><div class="k">SBOM</div>
-          <h3>CycloneDX 1.6</h3>
-          <p>Nomenclature avec l'analyse VEX intégrée au même document.</p></div>
-        <div class="format"><div class="k">SBOM</div>
-          <h3>SPDX 2.3</h3>
-          <p>Le format alternatif, quand un donneur d'ordre l'impose.</p></div>
-        <div class="format"><div class="k">Avis</div>
-          <h3>CSAF 2.0</h3>
-          <p>Avis de sécurité publiable, avec libellés de justification normalisés.</p></div>
-        <div class="format"><div class="k">Déclaration</div>
-          <h3>Notification Art. 14</h3>
-          <p>Brouillon pré-rempli pour l'ENISA et le CSIRT, échéances calculées.</p></div>
-      </div>
+      <dl class="dl">
+        <div><dt><small>SBOM</small>CycloneDX 1.6</dt>
+          <dd>Nomenclature avec l'analyse VEX intégrée au même document.</dd></div>
+        <div><dt><small>SBOM</small>SPDX 2.3</dt>
+          <dd>Le format alternatif, quand un donneur d'ordre l'impose.</dd></div>
+        <div><dt><small>Avis</small>CSAF 2.0</dt>
+          <dd>Avis de sécurité publiable, avec libellés de justification normalisés.</dd></div>
+        <div><dt><small>Déclaration</small>Notification Art. 14</dt>
+          <dd>Brouillon pré-rempli pour l'ENISA et le CSIRT, échéances calculées.</dd></div>
+      </dl>
 
-      <div class="note">
+      <div class="aside">
         <h3>Le registre de preuves</h3>
         <p>Un journal en ajout seul : chaque décision de triage est consignée avec sa
           justification écrite, son auteur et son horodatage. Une décision
@@ -319,48 +280,56 @@ footer{border-top:1px solid var(--rule-2);padding-block:26px 44px;
           concluiez « non affecté » — ce qu'il n'admet pas, c'est le silence.</p>
       </div>
     </div>
-  </div></div>
-</section>
+  </section>
 
-<!-- ─────────── clause 3 ─────────── -->
-<section class="clause">
-  <div class="wrap"><div class="clause-inner">
-    <div class="clause-ref"><b>03</b>Le périmètre</div>
-    <div class="clause-body">
+  <section class="sec row">
+    <div class="rail"><b>§ 3</b>Le calendrier<br>2026 — 2027</div>
+    <div class="col">
+      <h2>Trois échéances, dont une déjà passée</h2>
+      <dl class="dl">
+        <div class="now"><dt>11 sept. 2026</dt>
+          <dd><strong>Article 14 — en vigueur.</strong> Signalement des vulnérabilités
+            activement exploitées : 24 h / 72 h / 14 j.</dd></div>
+        <div><dt>11 juin 2027</dt>
+          <dd>Évaluation de la conformité et organismes notifiés.</dd></div>
+        <div><dt>11 déc. 2027</dt>
+          <dd><strong>Application intégrale.</strong> Exigences essentielles de
+            l'Annexe I, documentation technique, marquage CE.</dd></div>
+      </dl>
+      <div class="aside">
+        <h3>Ce qui arrivera avant le régulateur</h3>
+        <p>Le premier questionnaire achats qui réclame un SBOM arrivera bien avant la
+          première sanction administrative. À ce moment-là, ce n'est plus un sujet de
+          conformité — c'est un appel d'offres gagné ou perdu.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec row">
+    <div class="rail"><b>§ 4</b>Le périmètre<br>Comparaison</div>
+    <div class="col wide">
       <h2>Pourquoi pas simplement Snyk ou Dependabot</h2>
       <p>Ces outils vous disent ce qui est vulnérable. Ils ne produisent ni registre de
         triage justifié, ni avis CSAF, ni brouillon de notification.</p>
-
-      <table class="compare">
-        <thead><tr><th>Capacité</th><th>Scanners classiques</th><th>CRA Sentinel</th></tr></thead>
-        <tbody>
-          <tr><td>Détecter les vulnérabilités</td><td>Oui</td><td>Oui</td></tr>
-          <tr><td>Isoler l'exploitation active</td><td>Rarement</td><td>Croisement CISA KEV</td></tr>
-          <tr><td>Contrôles rattachés aux articles</td><td>Non</td><td>14 contrôles</td></tr>
-          <tr><td>Registre de triage justifié</td><td>Non</td><td>Journal en ajout seul</td></tr>
-          <tr><td>Avis CSAF 2.0 publiable</td><td>Non</td><td>Oui</td></tr>
-          <tr><td>Brouillon de notification Art. 14</td><td>Non</td><td>Échéances calculées</td></tr>
-        </tbody>
-      </table>
-
-      <div class="note">
-        <h3>Ce que l'outil ne couvre pas</h3>
-        <p>Le risque lié aux composants tiers, oui. Le code source propriétaire, le
-          matériel, la cryptographie et les mesures organisationnelles de l'Annexe I
-          Partie I, non. Les contrôles marqués <em>Attestation</em> sont exclus du score
-          plutôt que comptés en échec : on ne pénalise pas ce qu'un outil ne sait pas
-          mesurer. La production automatisée appuie la documentation technique de
-          l'Annexe VII, elle ne s'y substitue pas.</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Capacité</th><th>Scanners classiques</th><th>CRA Sentinel</th></tr></thead>
+          <tbody>
+            <tr><td>Détecter les vulnérabilités</td><td>Oui</td><td>Oui</td></tr>
+            <tr><td>Isoler l'exploitation active</td><td>Rarement</td><td>Croisement CISA KEV</td></tr>
+            <tr><td>Contrôles rattachés aux articles</td><td>Non</td><td>14 contrôles</td></tr>
+            <tr><td>Registre de triage justifié</td><td>Non</td><td>Journal en ajout seul</td></tr>
+            <tr><td>Avis CSAF 2.0 publiable</td><td>Non</td><td>Oui</td></tr>
+            <tr><td>Brouillon de notification Art. 14</td><td>Non</td><td>Échéances calculées</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div></div>
-</section>
+  </section>
 
-<!-- ─────────── clause 4 ─────────── -->
-<section class="clause">
-  <div class="wrap"><div class="clause-inner">
-    <div class="clause-ref"><b>04</b>Pour qui</div>
-    <div class="clause-body">
+  <section class="sec row">
+    <div class="rail"><b>§ 5</b>Destinataires</div>
+    <div class="col">
       <h2>Conçu pour les fabricants qui n'ont pas d'équipe sécurité</h2>
       <div class="who">
         <div>
@@ -381,38 +350,32 @@ footer{border-top:1px solid var(--rule-2);padding-block:26px 44px;
         </div>
         <div>
           <h3>Équipe interne</h3>
-          <p>Un garde-fou en intégration continue.
-            <code>--fail-on exploited</code> bloque une release qui embarquerait un
-            composant activement exploité.</p>
+          <p>Un garde-fou en intégration continue. <code>--fail-on exploited</code>
+            bloque une release qui embarquerait un composant activement exploité.</p>
         </div>
       </div>
     </div>
-  </div></div>
-</section>
+  </section>
 
-<!-- ─────────── clause 5 ─────────── -->
-<section class="clause" id="demarrer">
-  <div class="wrap"><div class="clause-inner">
-    <div class="clause-ref"><b>05</b>Démarrer</div>
-    <div class="clause-body">
-      <h2>Neuf commandes</h2>
-      <p>Bibliothèque standard uniquement — l'outil s'installe dans un environnement de
-        build isolé et fonctionnera encore dans dix ans, ce qui compte quand la période
-        de support que vous déclarez est de cinq ans.</p>
-
-      <div class="cmds">
-        <div><code>cra scan</code><p>Analyse, évalue, exporte tous les formats.</p></div>
-        <div><code>cra init</code><p>Génère <code>SECURITY.md</code>, le runbook Article 14 et un workflow CI.</p></div>
-        <div><code>cra triage</code><p>Consigne une décision dans le registre de preuves.</p></div>
-        <div><code>cra ledger</code><p>Affiche la piste d'audit avec son historique.</p></div>
-        <div><code>cra notify</code><p>Rédige la notification à l'ENISA et au CSIRT.</p></div>
-        <div><code>cra advisory</code><p>Produit un avis CSAF 2.0 publiable.</p></div>
-        <div><code>cra watch</code><p>Alerte sur toute nouvelle exploitation active.</p></div>
-        <div><code>cra serve</code><p>Tableau de bord local, sans terminal.</p></div>
-        <div><code>cra deadlines</code><p>Vous situe dans le calendrier réglementaire.</p></div>
-      </div>
-
-      <div class="note sig">
+  <section class="sec row">
+    <div class="rail"><b>§ 6</b>Interface<br>Neuf commandes</div>
+    <div class="col">
+      <h2>Bibliothèque standard uniquement</h2>
+      <p>L'outil s'installe dans un environnement de build isolé et fonctionnera encore
+        dans dix ans — ce qui compte quand la période de support que vous déclarez est
+        de cinq ans.</p>
+      <dl class="dl">
+        <div><dt>cra scan</dt><dd>Analyse, évalue, exporte tous les formats.</dd></div>
+        <div><dt>cra init</dt><dd>Génère <code>SECURITY.md</code>, le runbook Article 14 et un workflow CI.</dd></div>
+        <div><dt>cra triage</dt><dd>Consigne une décision dans le registre de preuves.</dd></div>
+        <div><dt>cra ledger</dt><dd>Affiche la piste d'audit avec son historique.</dd></div>
+        <div><dt>cra notify</dt><dd>Rédige la notification à l'ENISA et au CSIRT.</dd></div>
+        <div><dt>cra advisory</dt><dd>Produit un avis CSAF 2.0 publiable.</dd></div>
+        <div><dt>cra watch</dt><dd>Alerte sur toute nouvelle exploitation active.</dd></div>
+        <div><dt>cra serve</dt><dd>Tableau de bord local, sans terminal.</dd></div>
+        <div><dt>cra deadlines</dt><dd>Vous situe dans le calendrier réglementaire.</dd></div>
+      </dl>
+      <div class="aside">
         <h3>Un garde-fou qui protège votre responsabilité</h3>
         <p>Si aucune source d'avis de sécurité n'a pu être consultée, le rapport est
           marqué <strong>« Non vérifié »</strong> et les contrôles concernés basculent en
@@ -420,21 +383,39 @@ footer{border-top:1px solid var(--rule-2);padding-block:26px 44px;
           « propre ».</p>
       </div>
     </div>
-  </div></div>
-</section>
+  </section>
 
-<div class="wrap">
-  <section class="closing">
-    <h2>Trente secondes pour savoir où vous en êtes</h2>
-    <p>Lancez le scan sur votre propre dépôt. Rien ne sort de votre machine, hormis les
-      coordonnées des paquets envoyées à OSV.dev.</p>
-    <div class="hero-actions">
-      <span class="cmd"><span>$</span>pip install cra-sentinel &amp;&amp; cra scan .</span>
+  <section class="sec row">
+    <div class="rail"><b>§ 7</b>Limites<br>Avertissement</div>
+    <div class="col">
+      <h2>Ce que l'outil ne couvre pas</h2>
+      <p>Le risque lié aux composants tiers, oui. Le code source propriétaire, le
+        matériel, la cryptographie et les mesures organisationnelles de l'Annexe I
+        Partie I, non. Les contrôles marqués <em>Attestation</em> sont exclus du score
+        plutôt que comptés en échec : on ne pénalise pas ce qu'un outil ne sait pas
+        mesurer.</p>
+      <p>La production automatisée appuie la documentation technique de l'Annexe VII,
+        elle ne s'y substitue pas. Le fabricant reste responsable de sa conformité.</p>
+      <div class="aside">
+        <h3>Ce qui sort de votre machine</h3>
+        <p>Les noms et versions des paquets, envoyés à OSV.dev pour interroger les avis
+          de sécurité. Rien d'autre : pas de code source, pas de télémétrie, pas de
+          compte. Les données d'avis sont mises en cache, et <code>--offline</code>
+          n'interroge plus le réseau du tout.</p>
+      </div>
     </div>
   </section>
 
-  <footer>
-    <div>CRA Sentinel · Licence MIT · <a href="https://github.com/tomvallat/cra-sentinel">GitHub</a> · <a href="https://pypi.org/project/cra-sentinel/">PyPI</a></div>
+</main>
+
+<div class="doc">
+  <div class="colophon">
+    <div>CRA Sentinel 1.0.0 &middot; Licence MIT &middot;
+      <a href="https://github.com/tomvallat/cra-sentinel">GitHub</a> &middot;
+      <a href="https://pypi.org/project/cra-sentinel/">PyPI</a></div>
     <div>Ce site n'est pas un conseil juridique</div>
-  </footer>
+  </div>
 </div>
+
+</body>
+</html>
