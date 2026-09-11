@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.cra-sentinel/
+# Scan output written into a scanned project, not source
+/*.html
+/sbom*.json
+/advisory*.json
+/scan.json
+/article14-*.json
+.DS_Store
+
+# Distribution
+dist/
+docs/pdf/
+
+# Internal commercial material — never published
+docs/OFFRE-COMMERCIALE.md
+docs/CRA-Sentinel-Dossier.pdf

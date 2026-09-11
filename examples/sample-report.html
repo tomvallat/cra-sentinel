@@ -1,0 +1,2288 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRA readiness — gateway-firmware-ui 3.2.1</title>
+<meta name="generator" content="CRA Sentinel 1.0.0">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#fbfcfd; --ink:#11161d; --ink-2:#4a5563;
+  --ink-3:#78828f; --line:#e3e7ec; --line-2:#eef1f4;
+  --crit:#b3261e; --crit-bg:#fdecea; --high:#c2620a; --high-bg:#fdf1e4;
+  --med:#8a6d00; --med-bg:#fdf8e2; --low:#3f6212; --low-bg:#f2f7e8;
+  --ok:#136c43; --ok-bg:#e8f5ee; --info:#1f4e9c; --info-bg:#eaf1fc;
+  --accent:#0f3a5f;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.04);
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --surface:#161b22; --surface-2:#1b2129; --ink:#e6edf3; --ink-2:#9aa6b2;
+    --ink-3:#6e7681; --line:#262d36; --line-2:#1f252d;
+    --crit-bg:#2d1416; --high-bg:#2a1e0d; --med-bg:#26220c; --low-bg:#16220f;
+    --ok-bg:#0f2119; --info-bg:#121e30;
+    --crit:#ff6b60; --high:#ffa04d; --med:#e0c341; --low:#8fce5c; --ok:#4bd18d; --info:#79aaf5;
+    --accent:#cfe3f5; --shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  font-feature-settings:"tnum" 0}
+.wrap{max-width:1140px;margin:0 auto;padding:32px 20px 72px}
+h1,h2,h3{line-height:1.25;letter-spacing:-.011em;margin:0}
+h1{font-size:26px;font-weight:660}
+h2{font-size:17px;font-weight:640;margin:0 0 14px}
+h3{font-size:14px;font-weight:620}
+p{margin:0 0 10px}
+a{color:var(--info);text-decoration:none}
+a:hover{text-decoration:underline}
+.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  font-size:.86em;font-variant-ligatures:none}
+.muted{color:var(--ink-2)}
+.dim{color:var(--ink-3);font-size:13px}
+
+header.top{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;
+  justify-content:space-between;padding-bottom:20px;margin-bottom:24px;
+  border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:640;font-size:13px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.brand .mark{width:22px;height:22px;border-radius:6px;background:var(--accent);
+  display:grid;place-items:center;color:var(--surface);font-size:11px;font-weight:800;
+  letter-spacing:0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .brand .mark{color:#0d1117}}
+.meta{text-align:right;font-size:12.5px;color:var(--ink-3);line-height:1.7}
+
+.banner{display:flex;gap:14px;padding:16px 18px;border-radius:var(--radius);
+  margin-bottom:22px;border:1px solid transparent;align-items:flex-start}
+.banner.crit{background:var(--crit-bg);border-color:color-mix(in srgb,var(--crit) 32%,transparent)}
+.banner.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.banner .icon{font-size:19px;line-height:1.3}
+.banner .t{font-weight:660;margin-bottom:3px}
+.banner.crit .t{color:var(--crit)}
+.banner.ok .t{color:var(--ok)}
+.banner .b{font-size:13.5px;color:var(--ink-2)}
+
+.grid{display:grid;gap:16px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 18px;box-shadow:var(--shadow)}
+.card .label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:620;margin-bottom:7px}
+.card .value{font-size:27px;font-weight:670;letter-spacing:-.02em;line-height:1.1}
+.card .sub{font-size:12.5px;color:var(--ink-3);margin-top:4px}
+
+section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;
+  gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.section-head h2{margin:0}
+
+.score-row{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.gauge{flex:0 0 auto}
+.score-text{flex:1;min-width:230px}
+.score-grade{font-size:32px;font-weight:700;letter-spacing:-.02em}
+.score-label{font-size:15px;font-weight:600;margin-top:2px}
+.score-note{font-size:13.5px;color:var(--ink-2);margin-top:8px;max-width:52ch}
+
+.bar{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--line-2);
+  margin:12px 0 8px}
+.bar span{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:620;padding:8px 10px;border-bottom:1px solid var(--line);
+  white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line-2);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+.tbl-wrap{overflow-x:auto;margin:0 -4px}
+
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11.5px;
+  font-weight:640;letter-spacing:.01em;white-space:nowrap}
+.p-crit{background:var(--crit-bg);color:var(--crit)}
+.p-high{background:var(--high-bg);color:var(--high)}
+.p-med{background:var(--med-bg);color:var(--med)}
+.p-low{background:var(--low-bg);color:var(--low)}
+.p-ok{background:var(--ok-bg);color:var(--ok)}
+.p-info{background:var(--info-bg);color:var(--info)}
+.p-none{background:var(--line-2);color:var(--ink-3)}
+.kev{background:var(--crit);color:#fff;font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .kev{color:#1a0b0b}}
+
+.check{display:grid;grid-template-columns:22px 1fr auto;gap:12px;padding:13px 0;
+  border-bottom:1px solid var(--line-2);align-items:start}
+.check:last-child{border-bottom:none}
+.check .st{font-size:15px;line-height:1.4;text-align:center}
+.check .title{font-weight:590}
+.check .ref{font-size:12px;color:var(--ink-3);margin-top:2px}
+.check .ev{font-size:13px;color:var(--ink-2);margin-top:6px}
+.check .rem{font-size:13px;margin-top:7px;padding:9px 11px;border-radius:7px;
+  background:var(--surface-2);border-left:2.5px solid var(--line);color:var(--ink-2)}
+.check.fail .rem{border-left-color:var(--crit)}
+.check.warn .rem{border-left-color:var(--high)}
+.check.manual .rem{border-left-color:var(--info)}
+
+.timeline{list-style:none;padding:0;margin:0}
+.timeline li{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+.timeline li:last-child{border-bottom:none}
+.timeline .when{flex:0 0 128px;font-weight:620;font-size:13.5px}
+.timeline .cd{flex:0 0 104px;font-size:12.5px;font-weight:620}
+.timeline .what{flex:1;font-size:13.5px;color:var(--ink-2)}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters button{font:inherit;font-size:12.5px;font-weight:590;padding:5px 11px;
+  border-radius:7px;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink-2);cursor:pointer;transition:.12s}
+.filters button:hover{border-color:var(--ink-3);color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
+  color:var(--surface)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .filters button[aria-pressed="true"]{color:#0d1117}}
+.search{font:inherit;font-size:13px;padding:6px 11px;border-radius:7px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:180px}
+.search:focus{outline:2px solid var(--info);outline-offset:1px}
+.hidden{display:none!important}
+.empty{padding:26px;text-align:center;color:var(--ink-3);font-size:13.5px}
+
+footer{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink-3);line-height:1.7}
+
+@media print{
+  body{background:#fff;font-size:10.5pt}
+  .wrap{max-width:none;padding:0}
+  section{break-inside:avoid;box-shadow:none;border-color:#d5d9de}
+  .filters,.search{display:none}
+  .hidden{display:table-row!important}
+  a{color:inherit;text-decoration:none}
+  tbody tr:hover{background:none}
+}
+@media (max-width:640px){
+  .wrap{padding:20px 14px 48px}
+  h1{font-size:21px}
+  .meta{text-align:left}
+  .timeline li{flex-wrap:wrap}
+  .timeline .when,.timeline .cd{flex:0 0 auto}
+}
+</style></head>
+<body><div class="wrap">
+<header class="top">
+  <div>
+    <div class="brand"><span class="mark">CS</span> CRA Sentinel</div>
+    <h1 style="margin-top:12px">gateway-firmware-ui <span class="muted"
+      style="font-weight:400">3.2.1</span></h1>
+    <p class="dim" style="margin-top:5px">Cyber Resilience Act readiness assessment
+      · Acme Industrial GmbH</p>
+  </div>
+  <div class="meta">
+    <div>Scan <span class="mono">cras-0b5c51014516522d</span></div>
+    <div>2026-09-10T16:17:43Z</div>
+    <div>Regulation (EU) 2024/2847</div>
+    <div>OSV.dev + CISA KEV</div>
+  </div>
+</header>
+
+<div class="banner crit">
+ <div class="icon">⚠</div>
+ <div><div class="t">Article 14 exposure — 2 actively exploited
+   vulnerabilities in shipped components</div>
+ <div class="b">CVE-2021-44228, CVE-2021-45046.
+ 2 linked to known ransomware campaigns. 
+ If this product is placed on the EU market and any of these is exploited,
+ Article 14(1)(a) of Regulation (EU) 2024/2847 requires an early warning to ENISA and
+ the relevant CSIRT <strong>within 24 hours of becoming aware</strong>, a full notification
+ within 72 hours, and a final report within 14 days of a corrective measure.</div></div></div>
+
+<section>
+  <div class="score-row">
+    <svg class="gauge" width="132" height="132" viewBox="0 0 132 132" role="img"
+ aria-label="Readiness score 58 out of 100">
+ <circle cx="66" cy="66" r="52" fill="none" stroke="var(--line-2)" stroke-width="11"/>
+ <circle cx="66" cy="66" r="52" fill="none" stroke="var(--med)" stroke-width="11"
+   stroke-linecap="round" stroke-dasharray="189.5 326.7"
+   transform="rotate(-90 66 66)"/>
+ <text x="66" y="62" text-anchor="middle" font-size="30" font-weight="700"
+   fill="var(--ink)" font-family="inherit">58</text>
+ <text x="66" y="82" text-anchor="middle" font-size="11" fill="var(--ink-3)"
+   font-family="inherit" letter-spacing="1">/ 100</text>
+</svg>
+    <div class="score-text">
+      <div class="score-grade" style="color:var(--med)">Grade C</div>
+      <div class="score-label">Material gaps</div>
+      <div class="score-note">Material gaps remain between the current state and the essential requirements of Annex I. The items marked Fail below are the shortest path to raising this score.</div>
+      <div class="dim" style="margin-top:10px">
+        7 passed ·
+        4 partial ·
+        2 failed · 1 require manual attestation
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="grid cards">
+  <div class="card"><div class="label">Components</div>
+    <div class="value">13</div>
+    <div class="sub">13 direct · 0 transitive</div></div>
+  <div class="card"><div class="label">Findings</div>
+    <div class="value">204</div>
+    <div class="sub">37 critical · 69 high</div></div>
+  <div class="card"><div class="label">Actively exploited</div>
+    <div class="value" style="color:var(--crit)">2</div>
+    <div class="sub">CISA KEV intersection</div></div>
+  <div class="card"><div class="label">Triage recorded</div>
+    <div class="value">2</div>
+    <div class="sub">of 204 findings</div></div>
+</div>
+
+<section>
+  <h2>Severity distribution</h2>
+  <div class="bar"><span style="width:18.14%;background:var(--crit)"></span><span style="width:33.82%;background:var(--high)"></span><span style="width:26.47%;background:var(--med)"></span><span style="width:1.96%;background:var(--low)"></span><span style="width:19.61%;background:var(--ink-3)"></span></div><div class="legend"><span><i style="background:var(--crit)"></i>Critical <strong>37</strong></span><span><i style="background:var(--high)"></i>High <strong>69</strong></span><span><i style="background:var(--med)"></i>Medium <strong>54</strong></span><span><i style="background:var(--low)"></i>Low <strong>4</strong></span><span><i style="background:var(--ink-3)"></i>Unknown <strong>40</strong></span></div>
+</section>
+
+<section>
+  <h2>Regulatory timeline</h2>
+  <ul class="timeline"><li><span class="when mono">2026-09-11</span><span class="cd" style="color:var(--crit)">in 1 day</span><span class="what">Article 14 — reporting of actively exploited vulnerabilities and severe incidents becomes applicable</span></li><li><span class="when mono">2027-06-11</span><span class="cd" style="color:var(--high)">in 274 days</span><span class="what">Notified-body / conformity-assessment provisions apply</span></li><li><span class="when mono">2027-12-11</span><span class="cd" style="color:var(--ink-3)">in 457 days</span><span class="what">Full application: all essential requirements (Annex I) and CE marking obligations</span></li></ul>
+  <p class="dim" style="margin-top:12px">Reporting under Article 14 flows through the
+  single reporting platform to ENISA and the CSIRT designated as coordinator in the
+  Member State of main establishment.</p>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Compliance checks</h2>
+    <span class="dim">14 controls assessed against Regulation (EU) 2024/2847</span>
+  </div>
+  <h3 style="margin:18px 0 4px;color:var(--ink-2)">Article 14 — Reporting obligations</h3><div class="check fail">
+ <div class="st" style="color:var(--crit)">✕</div>
+ <div>
+   <div class="title">No actively exploited vulnerability in shipped components</div>
+   <div class="ref mono">ART14-01 · Article 14(1)(a)</div>
+   <div class="ev">2 component vulnerabilities appear in the CISA KEV catalogue: CVE-2021-44228, CVE-2021-45046 — 2 linked to known ransomware campaigns.</div>
+   <div class="rem">If any of these is exploited in a product you have placed on the EU market, Article 14 requires an early warning to ENISA and your national CSIRT within 24 hours of becoming aware, a full notification within 72 hours, and a final report within 14 days of a corrective measure. Remediate or file a documented VEX justification.</div>
+ </div>
+ <div><span class="pill p-crit">Fail</span></div>
+</div><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">Documented 24h/72h/14d reporting procedure</div>
+   <div class="ref mono">ART14-02 · Article 14(2)-(4)</div>
+   <div class="ev">Reporting timeline referenced in SECURITY.md</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">Named point of contact for vulnerability reports</div>
+   <div class="ref mono">ART14-03 · Article 13(19)</div>
+   <div class="ev">Contact address published in SECURITY.md</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><h3 style="margin:18px 0 4px;color:var(--ink-2)">Annex I Part II(2) — Vulnerability handling</h3><div class="check fail">
+ <div class="st" style="color:var(--crit)">✕</div>
+ <div>
+   <div class="title">Critical and high-severity vulnerabilities remediated</div>
+   <div class="ref mono">VULN-02 · Annex I, Part II(2)</div>
+   <div class="ev">37 critical and 69 high-severity findings.</div>
+   <div class="rem">Annex I requires vulnerabilities to be addressed and remediated without delay. Upgrade, or record a VEX justification with `cra triage` — an undocumented decision is a compliance gap.</div>
+ </div>
+ <div><span class="pill p-crit">Fail</span></div>
+</div><div class="check warn">
+ <div class="st" style="color:var(--high)">!</div>
+ <div>
+   <div class="title">No findings left unaddressed where a fix already exists</div>
+   <div class="ref mono">VULN-03 · Annex I, Part II(2)</div>
+   <div class="ev">203 of 204 findings have a published fixed version available.</div>
+   <div class="rem">Upgrading these is the cheapest compliance win available.</div>
+ </div>
+ <div><span class="pill p-high">Partial</span></div>
+</div><h3 style="margin:18px 0 4px;color:var(--ink-2)">Annex I Part II(1) — Component inventory</h3><div class="check warn">
+ <div class="st" style="color:var(--high)">!</div>
+ <div>
+   <div class="title">Machine-readable SBOM present in the repository</div>
+   <div class="ref mono">SBOM-01 · Annex I, Part II(1)</div>
+   <div class="ev">No committed SBOM found, but 13 components were resolved from 4 manifest(s).</div>
+   <div class="rem">Run `cra scan --sbom sbom.json` and commit the result. CycloneDX 1.6 and SPDX 2.3 are both accepted.</div>
+ </div>
+ <div><span class="pill p-high">Partial</span></div>
+</div><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">SBOM covers at least top-level dependencies</div>
+   <div class="ref mono">SBOM-02 · Annex I, Part II(1)</div>
+   <div class="ev">13 components resolved (top-level only) across 4 ecosystem(s).</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><div class="check warn">
+ <div class="st" style="color:var(--high)">!</div>
+ <div>
+   <div class="title">Shipped versions are pinned and reproducible</div>
+   <div class="ref mono">SBOM-03 · Annex I, Part II(1)</div>
+   <div class="ev">No lockfile found; versions resolved from loose manifests.</div>
+   <div class="rem">Commit lockfiles. Without them the SBOM describes what was requested, not what ships — auditors reject this.</div>
+ </div>
+ <div><span class="pill p-high">Partial</span></div>
+</div><div class="check warn">
+ <div class="st" style="color:var(--high)">!</div>
+ <div>
+   <div class="title">Component licence inventory captured</div>
+   <div class="ref mono">DOC-02 · Annex I, Part II(1)</div>
+   <div class="ev">Licence metadata resolved for 0/13 components (0%).</div>
+   <div class="rem">Not a CRA requirement in itself, but licence data belongs in the same SBOM an auditor will read.</div>
+ </div>
+ <div><span class="pill p-high">Partial</span></div>
+</div><h3 style="margin:18px 0 4px;color:var(--ink-2)">Annex I Part II — Process and disclosure</h3><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">Coordinated vulnerability disclosure policy published</div>
+   <div class="ref mono">VULN-01 · Annex I, Part II(5)</div>
+   <div class="ev">Found SECURITY.md (2002 bytes)</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">Secure update mechanism documented</div>
+   <div class="ref mono">UPD-01 · Annex I, Part II(7)-(8)</div>
+   <div class="ev">Update mechanism described in project documentation.</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">Support period declared to users</div>
+   <div class="ref mono">UPD-02 · Article 13(8)</div>
+   <div class="ev">Support period / EOL policy referenced in documentation.</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><h3 style="margin:18px 0 4px;color:var(--ink-2)">Evidence and traceability</h3><div class="check pass">
+ <div class="st" style="color:var(--ok)">✓</div>
+ <div>
+   <div class="title">Triage decisions recorded with a written rationale</div>
+   <div class="ref mono">VULN-04 · Annex I, Part II(2)</div>
+   <div class="ev">2 triage decision(s) recorded in the evidence ledger.</div>
+   
+ </div>
+ <div><span class="pill p-ok">Pass</span></div>
+</div><h3 style="margin:18px 0 4px;color:var(--ink-2)">Conformity assessment</h3><div class="check manual">
+ <div class="st" style="color:var(--info)">◐</div>
+ <div>
+   <div class="title">Technical documentation and EU declaration of conformity</div>
+   <div class="ref mono">DOC-01 · Article 13(12), Annex VII</div>
+   <div class="ev">Requires human attestation — cannot be inferred from source code.</div>
+   <div class="rem">Assemble the Annex VII technical file: product description, risk assessment, applied standards, SBOM, vulnerability-handling evidence. Required from 11 December 2027.</div>
+ </div>
+ <div><span class="pill p-info">Attest</span></div>
+</div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Vulnerability register</h2>
+    <div class="filters">
+      <input class="search" id="vuln-search" type="search" placeholder="Filter…"
+        aria-label="Filter vulnerabilities">
+      <button data-filter="all" aria-pressed="true">All</button>
+      <button data-filter="kev" aria-pressed="false">Exploited</button>
+      <button data-filter="CRITICAL" aria-pressed="false">Critical</button>
+      <button data-filter="HIGH" aria-pressed="false">High</button>
+      <button data-filter="fixable" aria-pressed="false">Fix available</button>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Identifier</th><th>Severity</th><th>CVSS</th><th>Component</th>
+      <th>Summary</th><th>Fixed in</th><th>Assessment</th></tr></thead>
+    <tbody id="vuln-body"><tr data-sev="CRITICAL" data-kev="1"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-jfh8-c2jp-5v3q" target="_blank" rel="noopener">CVE-2021-44228</a></td>
+ <td><span class="pill kev" title="Listed in CISA Known Exploited Vulnerabilities — Article 14 trigger">EXPLOITED</span> <span class="pill p-crit">Critical</span></td>
+ <td class="mono">10.0</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Remote code injection in Log4j</td>
+ <td class="mono">2.15.0, 2.12.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="1"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-7rjr-3q55-vv33" target="_blank" rel="noopener">CVE-2021-45046</a></td>
+ <td><span class="pill kev" title="Listed in CISA Known Exploited Vulnerabilities — Article 14 trigger">EXPLOITED</span> <span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.0</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Incomplete fix for Apache Log4j vulnerability</td>
+ <td class="mono">2.16.0, 2.12.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-x527-x647-q7gg" target="_blank" rel="noopener">CVE-2026-46595</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">10.0</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: Invoking VerifiedPublicKeyCallback permissions skip enforcement</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-3ww4-gg4f-jr7f" target="_blank" rel="noopener">CVE-2023-50782</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Python Cryptography package vulnerable to Bleichenbacher timing oracle attack</td>
+ <td class="mono">42.0.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-562c-5r94-xh97" target="_blank" rel="noopener">CVE-2018-1000656</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>Flask is vulnerable to Denial of Service via incorrect encoding of JSON data</td>
+ <td class="mono">0.12.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5wv5-4vpf-pj6m" target="_blank" rel="noopener">CVE-2019-1010083</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>Pallets Project Flask is vulnerable to Denial of Service via Unexpected memory usage</td>
+ <td class="mono">1.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-6757-jp84-gxfx" target="_blank" rel="noopener">CVE-2020-1747</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">pyyaml 5.3</td>
+ <td>Improper Input Validation in PyYAML</td>
+ <td class="mono">5.3.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-8q59-q68h-6hv4" target="_blank" rel="noopener">CVE-2020-14343</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">pyyaml 5.3</td>
+ <td>Improper Input Validation in PyYAML</td>
+ <td class="mono">5.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-hggm-jpg3-v476" target="_blank" rel="noopener">CVE-2020-25659</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>RSA decryption vulnerable to Bleichenbacher timing vulnerability</td>
+ <td class="mono">3.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-jr5f-v2jv-69x6" target="_blank" rel="noopener">CVE-2025-27152</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL</td>
+ <td class="mono">1.8.2, 0.30.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-m2qf-hxjv-5gpq" target="_blank" rel="noopener">CVE-2023-30861</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>Flask vulnerable to possible disclosure of permanent session cookie due to missing Vary: Cookie header</td>
+ <td class="mono">2.3.2, 2.2.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-p92q-9vqr-4j8v" target="_blank" rel="noopener">CVE-2026-44487</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Proxy-Authorization Credential Leak to Origin Server Across HTTP-to-HTTPS Redirect in Axios Node.js HTT</td>
+ <td class="mono">1.16.0, 0.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-r6ph-v2qm-q3c2" target="_blank" rel="noopener">CVE-2026-26007</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>cryptography Vulnerable to a Subgroup Attack Due to Missing Subgroup Validation for SECT Curves</td>
+ <td class="mono">46.0.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-rgv9-q543-rqg4" target="_blank" rel="noopener">CVE-2022-42004</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Uncontrolled Resource Consumption in FasterXML jackson-databind</td>
+ <td class="mono">2.13.4, 2.12.7.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1283" target="_blank" rel="noopener">CVE-2023-50782</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Python Cryptography package vulnerable to Bleichenbacher timing oracle attack</td>
+ <td class="mono">42.0.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-3553" target="_blank" rel="noopener">CVE-2026-69249</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>python-cryptography: Duplicate self-signed intermediates can cause exponential path-building</td>
+ <td class="mono">49.0.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-3554" target="_blank" rel="noopener">CVE-2026-69248</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>python-cryptography verifier accepts wildcard DNS names allowing escape from permittedSubtrees</td>
+ <td class="mono">49.0.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-4w82-r329-3q67" target="_blank" rel="noopener">CVE-2020-8840</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of Untrusted Data in jackson-databind</td>
+ <td class="mono">2.9.10.3, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5p34-5m6p-p58g" target="_blank" rel="noopener">CVE-2020-9546</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-6fpp-rgj9-8rwc" target="_blank" rel="noopener">CVE-2019-14379</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in FasterXML jackson-databind</td>
+ <td class="mono">2.9.9.2, 2.8.11.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-85cw-hj65-qqv9" target="_blank" rel="noopener">CVE-2019-16335</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Polymorphic Typing issue in FasterXML jackson-databind</td>
+ <td class="mono">2.9.10, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-f3j5-rmmp-3fc5" target="_blank" rel="noopener">CVE-2019-17267</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Improper Input Validation in jackson-databind</td>
+ <td class="mono">2.9.10, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-fmmc-742q-jg75" target="_blank" rel="noopener">CVE-2019-16943</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind polymorphic typing issue</td>
+ <td class="mono">2.9.10.1, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-gjmw-vf9h-g25v" target="_blank" rel="noopener">CVE-2019-17531</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind polymorphic typing issue</td>
+ <td class="mono">2.9.10.1, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-gww7-p5w4-wrfv" target="_blank" rel="noopener">CVE-2019-20330</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of Untrusted Data in jackson-databind</td>
+ <td class="mono">2.9.10.2, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-h822-r4r5-v8jg" target="_blank" rel="noopener">CVE-2019-14540</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Polymorphic Typing issue in FasterXML jackson-databind</td>
+ <td class="mono">2.9.10, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-mx7p-6679-8g3q" target="_blank" rel="noopener">CVE-2019-16942</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Polymorphic Typing in FasterXML jackson-databind</td>
+ <td class="mono">2.9.10.1, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-p43x-xfjf-5jhr" target="_blank" rel="noopener">CVE-2020-9548</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4, 2.8.11.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-q93h-jc49-78gg" target="_blank" rel="noopener">CVE-2020-9547</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4, 2.8.11.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-xvch-5gv4-984h" target="_blank" rel="noopener">CVE-2021-44906</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.8</td>
+ <td class="mono">minimist 1.2.0</td>
+ <td>Prototype Pollution in minimist</td>
+ <td class="mono">1.2.6, 0.2.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5cgq-3rg8-m6cv" target="_blank" rel="noopener">CVE-2026-42508</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto vulnerable to auth bypass via unenforced @revoked status</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-89gr-r52h-f8rx" target="_blank" rel="noopener">CVE-2026-39831</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: FIDO/U2F security key physical presence check can be bypassed</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-f5wc-c3c7-36mc" target="_blank" rel="noopener">CVE-2026-39832</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto doesn&#x27;t drop invoking agent constraints when forwarding keys</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-jppx-rxg9-jmrx" target="_blank" rel="noopener">CVE-2026-39833</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto doesn&#x27;t enforce invoking key constraints</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-rm3j-f69w-wqmq" target="_blank" rel="noopener">CVE-2026-39834</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto vulnerable to infinite loop on large channel writes</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-v778-237x-gjrc" target="_blank" rel="noopener">CVE-2024-45337</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Misuse of ServerConfig.PublicKeyCallback may cause authorization bypass in golang.org/x/crypto</td>
+ <td class="mono">0.31.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="CRITICAL" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-vgwf-h737-ff37" target="_blank" rel="noopener">CVE-2026-39830</a></td>
+ <td><span class="pill p-crit">Critical</span></td>
+ <td class="mono">9.1</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: Invoking client can cause server deadlock on unexpected responses</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-58pp-9c76-5625" target="_blank" rel="noopener">CVE-2020-11112</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-758m-v56v-grj4" target="_blank" rel="noopener">CVE-2020-10969</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-95cm-88f5-f2c7" target="_blank" rel="noopener">CVE-2020-10672</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9vvp-fxw6-jcxr" target="_blank" rel="noopener">CVE-2020-11113</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-fqwf-pjwf-7vqv" target="_blank" rel="noopener">CVE-2020-10673</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4, 2.6.7.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-rf6r-2c4q-2vwg" target="_blank" rel="noopener">CVE-2020-10968</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-v3xw-c963-f5hc" target="_blank" rel="noopener">CVE-2020-11111</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.8</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-462w-v97r-4m45" target="_blank" rel="noopener">CVE-2019-10906</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.6</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja2 sandbox escape via string formatting</td>
+ <td class="mono">2.10.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-p6xc-xr62-6r2g" target="_blank" rel="noopener">CVE-2021-45105</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.6</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Apache Log4j2 vulnerable to Improper Input Validation and Uncontrolled Recursion</td>
+ <td class="mono">2.17.0, 2.12.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-pjwm-pj3p-43mv" target="_blank" rel="noopener">CVE-2026-44492</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.6</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>axios&#x27;s shouldBypassProxy does not recognize IPv4-mapped IPv6 addresses, allowing NO_PROXY bypass (incomplete </td>
+ <td class="mono">1.16.0, 0.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-27xj-rqx5-2255" target="_blank" rel="noopener">CVE-2020-11619</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5949-rw7g-wx7w" target="_blank" rel="noopener">CVE-2021-20190</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in jackson-databind</td>
+ <td class="mono">2.9.10.7, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5r5r-6hpj-8gg9" target="_blank" rel="noopener">CVE-2020-35728</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Serialization gadget exploit in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-89qr-369f-5m5x" target="_blank" rel="noopener">CVE-2020-36182</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-8c4j-34r4-xr8g" target="_blank" rel="noopener">CVE-2020-36180</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-8w26-6f25-cm9x" target="_blank" rel="noopener">CVE-2020-36185</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9gph-22xh-8x98" target="_blank" rel="noopener">CVE-2020-36179</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9m6f-7xcq-8vf8" target="_blank" rel="noopener">CVE-2020-36183</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-c265-37vj-cwcc" target="_blank" rel="noopener">CVE-2020-14062</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in Jackson Databind</td>
+ <td class="mono">2.9.10.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-c2q3-4qrh-fm48" target="_blank" rel="noopener">CVE-2020-14061</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in Jackson Databind</td>
+ <td class="mono">2.9.10.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-cvm9-fjm9-3572" target="_blank" rel="noopener">CVE-2020-36181</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-f9xh-2qgp-cq57" target="_blank" rel="noopener">CVE-2020-36188</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-h3cw-g4mq-c5x2" target="_blank" rel="noopener">CVE-2020-24616</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Code Injection in jackson-databind</td>
+ <td class="mono">2.9.10.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-h4rc-386g-6m85" target="_blank" rel="noopener">CVE-2020-11620</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind mishandles the interaction between serialization gadgets and typing</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-j823-4qch-3rgm" target="_blank" rel="noopener">CVE-2020-14060</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in Jackson Databind</td>
+ <td class="mono">2.9.10.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-m6x4-97wx-4q27" target="_blank" rel="noopener">CVE-2020-36184</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-mc6h-4qgp-37qh" target="_blank" rel="noopener">CVE-2020-14195</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in Jackson Databind</td>
+ <td class="mono">2.9.10.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-qjw2-hr98-qgfh" target="_blank" rel="noopener">CVE-2020-24750</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.6, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-r3gr-cxrf-hg25" target="_blank" rel="noopener">CVE-2020-35491</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Serialization gadgets exploit in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-r5fr-rjxr-66jc" target="_blank" rel="noopener">CVE-2021-23337</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">lodash 4.17.15</td>
+ <td>lodash vulnerable to Code Injection via `_.template` imports key names</td>
+ <td class="mono">4.18.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-r695-7vr9-jgc2" target="_blank" rel="noopener">CVE-2020-36187</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-rpr3-cw39-3pxh" target="_blank" rel="noopener">CVE-2020-10650</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind vulnerable to unsafe deserialization</td>
+ <td class="mono">2.9.10.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-v585-23hc-c647" target="_blank" rel="noopener">CVE-2020-36186</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-vfqx-33qm-g869" target="_blank" rel="noopener">CVE-2020-36189</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Unsafe Deserialization in jackson-databind</td>
+ <td class="mono">2.9.10.8, 2.6.7.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-wh8g-3j2c-rqj5" target="_blank" rel="noopener">CVE-2020-35490</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.1</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Serialization gadgets exploit in jackson-databind</td>
+ <td class="mono">2.9.10.8</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-cpwx-vrp4-4pq7" target="_blank" rel="noopener">CVE-2025-27516</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.0</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja2 vulnerable to sandbox breakout through attr filter selecting format method</td>
+ <td class="mono">3.1.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-q2x7-8rv6-6q7h" target="_blank" rel="noopener">CVE-2024-56326</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.0</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja has a sandbox breakout through indirect reference to format method</td>
+ <td class="mono">3.1.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1471" target="_blank" rel="noopener">CVE-2025-27516</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.0</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja2 vulnerable to sandbox breakout through attr filter selecting format method</td>
+ <td class="mono">3.1.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1475" target="_blank" rel="noopener">CVE-2024-56326</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">8.0</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja has a sandbox breakout through indirect reference to format method</td>
+ <td class="mono">3.1.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-288c-cq4h-88gq" target="_blank" rel="noopener">CVE-2020-25649</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>XML External Entity (XXE) Injection in Jackson Databind</td>
+ <td class="mono">2.10.5.1, 2.9.10.7</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-3vm4-22fp-5rfm" target="_blank" rel="noopener">CVE-2020-29652</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto/ssh NULL Pointer Dereference vulnerability</td>
+ <td class="mono">0.0.0-20201216223049-8b5274cf687f</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-43fc-jf86-j433" target="_blank" rel="noopener">CVE-2026-25639</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios is Vulnerable to Denial of Service via __proto__ Key in mergeConfig</td>
+ <td class="mono">1.13.5, 0.30.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-537c-gmf6-5ccf" target="_blank" rel="noopener">GHSA-537c-gmf6-5ccf</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Vulnerable OpenSSL included in cryptography wheels</td>
+ <td class="mono">48.0.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-57j2-w4cx-62h2" target="_blank" rel="noopener">CVE-2020-36518</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deeply nested json in jackson-databind</td>
+ <td class="mono">2.13.2.1, 2.12.6.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5ww9-j83m-q7qx" target="_blank" rel="noopener">CVE-2019-12086</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Information exposure in FasterXML jackson-databind</td>
+ <td class="mono">2.9.9, 2.8.11.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-62hf-57xw-28j9" target="_blank" rel="noopener">CVE-2026-42039</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: unbounded recursion in toFormData causes DoS via deeply nested request data</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-8c26-wmh5-6g9v" target="_blank" rel="noopener">CVE-2022-27191</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto/ssh Denial of service via crafted Signer</td>
+ <td class="mono">0.0.0-20220314234659-1baeb1ce4c0b</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-cf6r-3wgc-h863" target="_blank" rel="noopener">CVE-2019-14892</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Polymorphic deserialization of malicious object in jackson-databind</td>
+ <td class="mono">2.9.10, 2.8.11.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-cph5-m8f7-6c5x" target="_blank" rel="noopener">CVE-2021-3749</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>axios Inefficient Regular Expression Complexity vulnerability</td>
+ <td class="mono">0.21.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-gwc9-m7rh-j2ww" target="_blank" rel="noopener">CVE-2021-43565</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>x/crypto/ssh vulnerable to panic via malformed packets</td>
+ <td class="mono">0.0.0-20211202192323-5770296d904e</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-gwp4-hfv6-p7hw" target="_blank" rel="noopener">CVE-2019-14439</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in FasterXML jackson-databind</td>
+ <td class="mono">2.9.9.2, 2.8.11.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-hcg3-q754-cr77" target="_blank" rel="noopener">CVE-2025-22869</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto Vulnerable to Denial of Service (DoS) via Slow or Incomplete Key Exchange</td>
+ <td class="mono">0.35.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-hfxv-24rg-xrqf" target="_blank" rel="noopener">CVE-2026-44496</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Regular Expression Denial of Service (ReDoS) via Cookie Name Injection</td>
+ <td class="mono">1.16.0, 0.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-j5f8-grm9-p9fc" target="_blank" rel="noopener">CVE-2026-44486</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Proxy-Authorization header leaks to redirect target when proxy is re-evaluated to direct connection</td>
+ <td class="mono">1.16.0, 0.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-jjjh-jjxp-wpff" target="_blank" rel="noopener">CVE-2022-42003</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Uncontrolled Resource Consumption in Jackson-databind</td>
+ <td class="mono">2.13.4.2, 2.12.7.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-q4h4-gmj2-qvw2" target="_blank" rel="noopener">CVE-2026-46597</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: Invoking byte arithmetic causes underflow and panic</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-w879-237q-wc7r" target="_blank" rel="noopener">CVE-2026-39829</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: Invoking pathological RSA/DSA parameters may cause DoS</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-x84v-xcm2-53pg" target="_blank" rel="noopener">CVE-2018-18074</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Insufficiently Protected Credentials in Requests</td>
+ <td class="mono">2.20.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2024-225" target="_blank" rel="noopener">CVE-2024-26130</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.5</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>cryptography is a package designed to expose cryptographic primitives and recipes to Python developers. Starti</td>
+ <td class="mono">97d231672763cdb5959a3b191e692a362f1b9e55, 42.0.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-6chq-wfr3-2hj9" target="_blank" rel="noopener">CVE-2026-42035</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.4</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Header Injection via Prototype Pollution</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-p6mc-m468-83gw" target="_blank" rel="noopener">CVE-2020-8203</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.4</td>
+ <td class="mono">lodash 4.17.15</td>
+ <td>Prototype Pollution in lodash</td>
+ <td class="mono">4.17.19</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-pf86-5x62-jrwf" target="_blank" rel="noopener">CVE-2026-42033</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.4</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Prototype Pollution Gadgets - Response Tampering, Data Exfiltration, and Request Hijacking</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-x4qr-2fvf-3mr5" target="_blank" rel="noopener">CVE-2023-0286</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.4</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Vulnerable OpenSSL included in cryptography wheels</td>
+ <td class="mono">39.0.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-800" target="_blank" rel="noopener">CVE-2023-0286</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.4</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Vulnerable OpenSSL included in cryptography wheels</td>
+ <td class="mono">39.0.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-35jh-r3h4-6jhm" target="_blank" rel="noopener">CVE-2021-23337</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.2</td>
+ <td class="mono">lodash 4.17.15</td>
+ <td>Command Injection in lodash</td>
+ <td class="mono">4.17.21</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-pmwg-cvhr-8vh7" target="_blank" rel="noopener">CVE-2026-42043</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.2</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Incomplete Fix for CVE-2025-62718 — NO_PROXY Protection Bypassed via RFC 1122 Loopback Subnet (127.0.0.</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-h395-qcrw-5vmq" target="_blank" rel="noopener">CVE-2020-28483</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.1</td>
+ <td class="mono">github.com/gin-gonic/gin v1.7.0</td>
+ <td>Inconsistent Interpretation of HTTP Requests in github.com/gin-gonic/gin</td>
+ <td class="mono">1.7.7</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-3g43-6gmg-66jw" target="_blank" rel="noopener">CVE-2026-44495</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">7.0</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>axios Vulnerable to Credential Theft and Response Hijacking via Prototype Pollution Gadget in Config Merge</td>
+ <td class="mono">1.15.2, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-3p68-rc4w-qgx5" target="_blank" rel="noopener">CVE-2025-62718</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios has a NO_PROXY Hostname Normalization Bypass that Leads to SSRF</td>
+ <td class="mono">1.15.0, 0.31.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-6hg6-v5c8-fphq" target="_blank" rel="noopener">CVE-2026-34477</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Apache Log4j Core: `verifyHostName` attribute silently ignored in TLS configuration</td>
+ <td class="mono">2.25.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-7q8q-rj6j-mhjq" target="_blank" rel="noopener">CVE-2026-67319</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Nested axios option objects can consume polluted prototype values</td>
+ <td class="mono">1.18.0, 0.33.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-g3rq-g295-4j3m" target="_blank" rel="noopener">CVE-2020-28493</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Regular Expression Denial of Service (ReDoS) in Jinja2</td>
+ <td class="mono">2.11.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-m959-cc7f-wv43" target="_blank" rel="noopener">CVE-2026-34073</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>cryptography has incomplete DNS name constraint enforcement on peer names</td>
+ <td class="mono">46.0.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-mmx7-hfxf-jppx" target="_blank" rel="noopener">CVE-2026-67316</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Prototype pollution gadgets can alter axios request construction</td>
+ <td class="mono">1.18.0, 0.33.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-vc5p-v9hr-52mj" target="_blank" rel="noopener">CVE-2025-68161</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Apache Log4j does not verify the TLS hostname in its Socket Appender</td>
+ <td class="mono">2.25.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-w7pp-m8wf-vj6r" target="_blank" rel="noopener">CVE-2023-23931</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Cipher.update_into can corrupt memory if passed an immutable python object as the outbuf</td>
+ <td class="mono">39.0.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-xxjr-mmjv-4gpg" target="_blank" rel="noopener">CVE-2025-13465</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.9</td>
+ <td class="mono">lodash 4.17.15</td>
+ <td>Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions</td>
+ <td class="mono">4.17.23</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-m7pr-hjqh-92cm" target="_blank" rel="noopener">CVE-2026-42038</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.8</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: no_proxy bypass via IP alias allows SSRF</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-8489-44mv-ggj8" target="_blank" rel="noopener">CVE-2021-44832</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.6</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Improper Input Validation and Injection in Apache Log4j2</td>
+ <td class="mono">2.17.1, 2.12.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-68rp-wp8r-4726" target="_blank" rel="noopener">CVE-2026-27205</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.5</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>Flask session does not add `Vary: Cookie` header when accessed in some ways</td>
+ <td class="mono">3.1.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-f23m-r3pf-42rh" target="_blank" rel="noopener">CVE-2025-13465</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.5</td>
+ <td class="mono">lodash 4.17.15</td>
+ <td>lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`</td>
+ <td class="mono">4.18.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-qpw4-5x99-6vjp" target="_blank" rel="noopener">CVE-2026-39827</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.5</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: Invoking memory leak when rejecting channels can lead to DoS</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-wf5p-g6vw-rhxx" target="_blank" rel="noopener">CVE-2023-45857</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.5</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios Cross-Site Request Forgery Vulnerability</td>
+ <td class="mono">1.6.0, 0.28.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-2141" target="_blank" rel="noopener">CVE-2026-26007</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.5</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>cryptography is a package designed to expose cryptographic primitives and recipes to Python developers. Prior </td>
+ <td class="mono">46.0.5</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-45gg-vh54-h5m9" target="_blank" rel="noopener">CVE-2026-39828</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.3</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto vulnerable to invoking bypass of certificate restrictions</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-j8r2-6x86-q33q" target="_blank" rel="noopener">CVE-2023-32681</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.1</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Unintended leak of Proxy-Authorization header in requests</td>
+ <td class="mono">2.31.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-rv95-896h-c2vc" target="_blank" rel="noopener">CVE-2024-29041</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">6.1</td>
+ <td class="mono">express 4.17.1</td>
+ <td>Express.js Open Redirect in malformed URLs</td>
+ <td class="mono">5.0.0-beta.3, 4.19.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-45x7-px36-x8w8" target="_blank" rel="noopener">CVE-2023-48795</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.9</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Prefix Truncation Attack against ChaCha20-Poly1305 and Encrypt-then-MAC aka Terrapin</td>
+ <td class="mono">0.17.0, 0.0.0-20231218163308-9d2ee975ef9f</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-4w2v-q235-vp99" target="_blank" rel="noopener">CVE-2020-28168</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.9</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios vulnerable to Server-Side Request Forgery</td>
+ <td class="mono">0.21.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-cmfg-87vq-g5g4" target="_blank" rel="noopener">CVE-2019-12814</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.9</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of untrusted data in FasterXML jackson-databind</td>
+ <td class="mono">2.9.9.1, 2.8.11.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-mph4-vhrx-mv67" target="_blank" rel="noopener">CVE-2019-12384</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.9</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Deserialization of Untrusted Data in FasterXML jackson-databind</td>
+ <td class="mono">2.9.9.1, 2.8.11.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-3vp4-m3rf-835h" target="_blank" rel="noopener">CVE-2023-26125</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.6</td>
+ <td class="mono">github.com/gin-gonic/gin v1.7.0</td>
+ <td>Improper input validation in github.com/gin-gonic/gin</td>
+ <td class="mono">1.9.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9wx4-h78v-vm56" target="_blank" rel="noopener">CVE-2024-35195</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.6</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests `Session` object does not verify requests after making first request with verify=False</td>
+ <td class="mono">2.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-vh95-rmgr-6w4m" target="_blank" rel="noopener">CVE-2020-7598</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.6</td>
+ <td class="mono">minimist 1.2.0</td>
+ <td>Prototype Pollution in minimist</td>
+ <td class="mono">1.2.3, 0.2.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1873" target="_blank" rel="noopener">CVE-2024-35195</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.6</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests `Session` object does not verify requests after making first request with verify=False</td>
+ <td class="mono">2.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9v9h-cgj8-h64p" target="_blank" rel="noopener">CVE-2024-0727</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.5</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Null pointer dereference in PKCS12 parsing</td>
+ <td class="mono">42.0.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1285" target="_blank" rel="noopener">CVE-2024-0727</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.5</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Null pointer dereference in PKCS12 parsing</td>
+ <td class="mono">42.0.2</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-2275" target="_blank" rel="noopener">CVE-2026-25645</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.5</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests is a HTTP library. Prior to version 2.33.0, the `requests.utils.extract_zipped_paths()` utility funct</td>
+ <td class="mono">2.33.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-h5c8-rqwp-cp95" target="_blank" rel="noopener">CVE-2024-22195</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.4</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja vulnerable to HTML attribute injection when passing user input as keys to xmlattr filter</td>
+ <td class="mono">3.1.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-h75v-3vvj-5mfj" target="_blank" rel="noopener">CVE-2024-34064</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.4</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja vulnerable to HTML attribute injection when passing user input as keys to xmlattr filter</td>
+ <td class="mono">3.1.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-xx6v-rp6x-q39c" target="_blank" rel="noopener">CVE-2026-42042</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.4</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: XSRF Token Cross-Origin Leakage via Prototype Pollution Gadget in `withXSRFToken` Boolean Coercion</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1473" target="_blank" rel="noopener">CVE-2024-22195</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.4</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja vulnerable to HTML attribute injection when passing user input as keys to xmlattr filter</td>
+ <td class="mono">3.1.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1474" target="_blank" rel="noopener">CVE-2024-34064</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.4</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>Jinja vulnerable to HTML attribute injection when passing user input as keys to xmlattr filter</td>
+ <td class="mono">3.1.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-29mw-wpgm-hmr9" target="_blank" rel="noopener">CVE-2020-28500</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">lodash 4.17.15</td>
+ <td>Regular Expression Denial of Service (ReDoS) in lodash</td>
+ <td class="mono">4.17.21</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5c9x-8gcm-mpgx" target="_blank" rel="noopener">CVE-2026-42034</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios&#x27; HTTP adapter-streamed uploads bypass maxBodyLength when maxRedirects: 0</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5jmj-h7xm-6q6v" target="_blank" rel="noopener">CVE-2026-54515</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind has case-insensitive deserialization bypasses per-property @JsonIgnoreProperties</td>
+ <td class="mono">3.1.4, 2.22.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-78mq-xcr3-xm33" target="_blank" rel="noopener">CVE-2026-39835</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto is vulnerable to invoking server panic during CheckHostKey/Authenticate flow</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9hjg-9r4m-mvj7" target="_blank" rel="noopener">CVE-2024-47081</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests vulnerable to .netrc credentials leak via malicious URLs</td>
+ <td class="mono">2.32.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-9m57-25v3-79x9" target="_blank" rel="noopener">CVE-2026-46598</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto: Invoking pathological inputs can lead to client panic</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-f6x5-jh6r-wrfv" target="_blank" rel="noopener">CVE-2025-47914</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto/ssh/agent vulnerable to panic if message is malformed due to out of bounds read</td>
+ <td class="mono">0.45.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-hgj6-7826-r7m5" target="_blank" rel="noopener">CVE-2026-54514</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>jackson-databind: InetSocketAddress deserialization triggers eager DNS resolution (SSRF)</td>
+ <td class="mono">3.1.4, 2.21.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-j5w8-q4qc-rx2x" target="_blank" rel="noopener">CVE-2025-58181</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>golang.org/x/crypto/ssh allows an attacker to cause unbounded memory consumption</td>
+ <td class="mono">0.45.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-vf2m-468p-8v99" target="_blank" rel="noopener">CVE-2026-42036</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: HTTP adapter streamed responses bypass maxContentLength</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-1872" target="_blank" rel="noopener">CVE-2024-47081</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests vulnerable to .netrc credentials leak via malicious URLs</td>
+ <td class="mono">2.32.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-35" target="_blank" rel="noopener">CVE-2026-34073</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.3</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>cryptography is a package designed to expose cryptographic primitives and recipes to Python developers. Prior </td>
+ <td class="mono">46.0.6</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-qw6h-vgh9-j6wx" target="_blank" rel="noopener">CVE-2024-43796</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">5.0</td>
+ <td class="mono">express 4.17.1</td>
+ <td>express vulnerable to XSS via response.redirect()</td>
+ <td class="mono">5.0.0, 4.20.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-898c-q2cr-xwhg" target="_blank" rel="noopener">CVE-2026-44490</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">4.8</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>axios has DoS &amp; Header Injection via Prototype Pollution Read-Side Gadgets in axios merge functions</td>
+ <td class="mono">1.16.0, 0.32.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-fvcv-3m26-pcqx" target="_blank" rel="noopener">CVE-2026-40175</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">4.8</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios has Unrestricted Cloud Metadata Exfiltration via Header Injection Chain</td>
+ <td class="mono">1.15.0, 0.31.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-w9j2-pvgh-6h63" target="_blank" rel="noopener">CVE-2026-42041</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">4.8</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Authentication Bypass via Prototype Pollution Gadget in `validateStatus` Merge Strategy</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-gc5v-m9x4-r6x2" target="_blank" rel="noopener">CVE-2026-25645</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">4.4</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function</td>
+ <td class="mono">2.33.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-2c4m-59x9-fr2g" target="_blank" rel="noopener">CVE-2023-29401</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">4.3</td>
+ <td class="mono">github.com/gin-gonic/gin v1.7.0</td>
+ <td>Gin Web Framework does not properly sanitize filename parameter of Context.FileAttachment function</td>
+ <td class="mono">1.9.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="MEDIUM" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2026-2151" target="_blank" rel="noopener">CVE-2026-27205</a></td>
+ <td><span class="pill p-med">Medium</span></td>
+ <td class="mono">4.3</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>Flask is a web server gateway interface (WSGI) web application framework. In versions 3.1.2 and below, when th</td>
+ <td class="mono">3.1.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="LOW" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-3pxv-7cmr-fjr4" target="_blank" rel="noopener">CVE-2026-34480</a></td>
+ <td><span class="pill p-low">Low</span></td>
+ <td class="mono">3.9</td>
+ <td class="mono">org.apache.logging.log4j:log4j-core 2.14.1</td>
+ <td>Apache Log4j Core: Silent log event loss in XmlLayout due to unescaped XML 1.0 forbidden characters</td>
+ <td class="mono">2.25.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="LOW" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-xhjh-pmcv-23jw" target="_blank" rel="noopener">CVE-2026-42040</a></td>
+ <td><span class="pill p-low">Low</span></td>
+ <td class="mono">3.7</td>
+ <td class="mono">axios 0.21.0</td>
+ <td>Axios: Null Byte Injection via Reverse-Encoding in AxiosURLSearchParams</td>
+ <td class="mono">1.15.1, 0.31.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="LOW" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-5cpq-8wj7-hf2v" target="_blank" rel="noopener">GHSA-5cpq-8wj7-hf2v</a></td>
+ <td><span class="pill p-low">Low</span></td>
+ <td class="mono">—</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>Vulnerable OpenSSL included in cryptography wheels</td>
+ <td class="mono">41.0.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="LOW" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-jm77-qphf-c4w8" target="_blank" rel="noopener">GHSA-jm77-qphf-c4w8</a></td>
+ <td><span class="pill p-low">Low</span></td>
+ <td class="mono">—</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>pyca/cryptography&#x27;s wheels include vulnerable OpenSSL</td>
+ <td class="mono">41.0.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="HIGH" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GHSA-qmqc-x3r4-6v39" target="_blank" rel="noopener">CVE-2019-14893</a></td>
+ <td><span class="pill p-high">High</span></td>
+ <td class="mono">—</td>
+ <td class="mono">com.fasterxml.jackson.core:jackson-databind 2.9.8</td>
+ <td>Polymorphic deserialization of malicious object in jackson-databind</td>
+ <td class="mono">2.9.10</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2021-0052" target="_blank" rel="noopener">CVE-2020-28483</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">github.com/gin-gonic/gin v1.7.0</td>
+ <td>Inconsistent interpretation of HTTP Requests in github.com/gin-gonic/gin</td>
+ <td class="mono">1.7.7</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2021-0227" target="_blank" rel="noopener">CVE-2020-29652</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Panic on crafted authentication request message in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.0.0-20201216223049-8b5274cf687f</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2021-0356" target="_blank" rel="noopener">CVE-2022-27191</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Denial of service via crafted Signer in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.0.0-20220314234659-1baeb1ce4c0b</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2022-0968" target="_blank" rel="noopener">CVE-2021-43565</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Panic on malformed packets in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.0.0-20211202192323-5770296d904e</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2023-1737" target="_blank" rel="noopener">CVE-2023-29401</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">github.com/gin-gonic/gin v1.7.0</td>
+ <td>Improper handling of filenames in Content-Disposition HTTP header in github.com/gin-gonic/gin</td>
+ <td class="mono">1.9.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2023-2402" target="_blank" rel="noopener">CVE-2023-48795</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Man-in-the-middle attacker can compromise integrity of secure channel in golang.org/x/crypto</td>
+ <td class="mono">0.17.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2024-2961" target="_blank" rel="noopener">CVE-2022-30636</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Limited directory traversal vulnerability on Windows in golang.org/x/crypto</td>
+ <td class="mono">0.0.0-20220525230936-793ad666bf5e</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2024-3321" target="_blank" rel="noopener">CVE-2024-45337</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Misuse of connection.serverAuthenticate may cause authorization bypass in golang.org/x/crypto</td>
+ <td class="mono">0.31.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2025-3487" target="_blank" rel="noopener">CVE-2025-22869</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Potential denial of service in golang.org/x/crypto</td>
+ <td class="mono">0.35.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2025-4116" target="_blank" rel="noopener">CVE-2025-47913</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Potential denial of service in golang.org/x/crypto/ssh/agent</td>
+ <td class="mono">0.43.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2025-4134" target="_blank" rel="noopener">CVE-2025-58181</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Unbounded memory consumption in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.45.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2025-4135" target="_blank" rel="noopener">CVE-2025-47914</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Malformed constraint may cause denial of service in golang.org/x/crypto/ssh/agent</td>
+ <td class="mono">0.45.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5005" target="_blank" rel="noopener">CVE-2026-39833</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5006" target="_blank" rel="noopener">CVE-2026-39832</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking agent constraints dropped when forwarding keys in golang.org/x/crypto/ssh/agent</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5013" target="_blank" rel="noopener">CVE-2026-46597</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking byte arithmetic causes underflow and panic in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5014" target="_blank" rel="noopener">CVE-2026-39828</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5015" target="_blank" rel="noopener">CVE-2026-39835</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking server panic during CheckHostKey/Authenticate in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5016" target="_blank" rel="noopener">CVE-2026-39827</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking memory leak when rejecting channels can lead to DoS in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5017" target="_blank" rel="noopener">CVE-2026-39830</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking client can cause server deadlock on unexpected responses in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5018" target="_blank" rel="noopener">CVE-2026-39829</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking pathological RSA/DSA parameters may cause DoS in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5019" target="_blank" rel="noopener">CVE-2026-39831</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking bypass of FIDO/U2F security keys physical interaction in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5020" target="_blank" rel="noopener">CVE-2026-39834</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5021" target="_blank" rel="noopener">CVE-2026-42508</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking auth bypass via unenforced @revoked status in golang.org/x/crypto/ssh/knownhosts</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5023" target="_blank" rel="noopener">CVE-2026-46595</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking VerifiedPublicKeyCallback permissions skip enforcement in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5033" target="_blank" rel="noopener">CVE-2026-46598</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Invoking pathological inputs can lead to client panic in golang.org/x/crypto/ssh/agent</td>
+ <td class="mono">0.52.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="0">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-5932" target="_blank" rel="noopener">GO-2026-5932</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues</td>
+ <td class="mono">—</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-6303" target="_blank" rel="noopener">CVE-2026-56854</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Source-address critical option not enforced for non-public-key auth callbacks in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.55.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-6354" target="_blank" rel="noopener">CVE-2026-78662</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Prevent DoS on deadlocked undecided channel in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.56.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/GO-2026-6355" target="_blank" rel="noopener">CVE-2026-56855</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9</td>
+ <td>Prevent DoS on deadlocked established channel in golang.org/x/crypto/ssh</td>
+ <td class="mono">0.56.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2018-28" target="_blank" rel="noopener">CVE-2018-18074</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>The Requests package before 2.20.0 for Python sends an HTTP Authorization header to an http URI upon receiving</td>
+ <td class="mono">c45d7c49ea75133e52ab22a8e9e13173938e36ff, 2.20.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2018-66" target="_blank" rel="noopener">CVE-2018-1000656</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>The Pallets Project flask version Before 0.12.3 contains a CWE-20: Improper Input Validation vulnerability in </td>
+ <td class="mono">0.12.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2019-179" target="_blank" rel="noopener">CVE-2019-1010083</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>The Pallets Project Flask before 1.0 is affected by: unexpected memory usage. The impact is: denial of service</td>
+ <td class="mono">1.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2019-217" target="_blank" rel="noopener">CVE-2019-10906</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>In Pallets Jinja before 2.10.1, str.format_map allows a sandbox escape.</td>
+ <td class="mono">2.10.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2020-96" target="_blank" rel="noopener">CVE-2020-1747</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">pyyaml 5.3</td>
+ <td>A vulnerability was discovered in the PyYAML library in versions before 5.3.1, where it is susceptible to arbi</td>
+ <td class="mono">5.3.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2021-142" target="_blank" rel="noopener">CVE-2020-14343</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">pyyaml 5.3</td>
+ <td>A vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitr</td>
+ <td class="mono">5.4</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2021-62" target="_blank" rel="noopener">CVE-2020-25659</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>python-cryptography 3.2 is vulnerable to Bleichenbacher timing attacks in the RSA decryption API, via timed pr</td>
+ <td class="mono">3.2.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2021-66" target="_blank" rel="noopener">CVE-2020-28493</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">jinja2 2.10</td>
+ <td>This affects the package jinja2 from 0.0.0 and before 2.11.3. The ReDoS vulnerability is mainly due to the `_p</td>
+ <td class="mono">2.11.3</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2023-11" target="_blank" rel="noopener">CVE-2023-23931</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">cryptography 2.3</td>
+ <td>cryptography is a package designed to expose cryptographic primitives and recipes to Python developers. In aff</td>
+ <td class="mono">94a50a9731f35405f0357fa5f3b177d46a726ab3, 39.0.1</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2023-62" target="_blank" rel="noopener">CVE-2023-30861</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">flask 0.12.2</td>
+ <td>Flask is a lightweight WSGI web application framework. When all of the following conditions are met, a respons</td>
+ <td class="mono">afd63b16170b7c047f5758eb910c416511e9c965, 70f906c51ce49c485f1d355703e9cc3386b1cc2b</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr><tr data-sev="UNKNOWN" data-kev="0"
+ data-fixable="1">
+ <td class="mono"><a href="https://osv.dev/vulnerability/PYSEC-2023-74" target="_blank" rel="noopener">CVE-2023-32681</a></td>
+ <td><span class="pill p-none">Unknown</span></td>
+ <td class="mono">—</td>
+ <td class="mono">requests 2.19.1</td>
+ <td>Requests is a HTTP library. Since Requests 2.3.0, Requests has been leaking Proxy-Authorization headers to des</td>
+ <td class="mono">74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5, 2.31.0</td>
+ <td><span class="pill p-none">untriaged</span></td>
+</tr></tbody>
+  </table>
+  </div>
+  <div class="empty hidden" id="vuln-empty">No finding matches the current filter.</div>
+</section>
+
+<footer>
+  <p><strong>Scope and limitations.</strong> This report is generated from dependency
+  manifests resolved at 2026-09-10T16:17:43Z and cross-referenced against the OSV.dev
+  advisory database and the CISA Known Exploited Vulnerabilities catalogue. It covers
+  third-party component risk. It does not assess first-party source code, hardware,
+  cryptographic implementation, or the organisational measures required by Annex I
+  Part I. Checks marked "Attest" cannot be verified by a tool and remain the
+  manufacturer's responsibility.</p>
+  <p>CRA Sentinel v1.0.0 · scan cras-0b5c51014516522d ·
+  generated 2026-09-10. This document supports, and does not replace,
+  the technical documentation required under Annex VII.</p>
+</footer>
+</div><script>
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('#vuln-body tr'));
+  var btns=[].slice.call(document.querySelectorAll('.filters [data-filter]'));
+  var box=document.getElementById('vuln-search');
+  var empty=document.getElementById('vuln-empty');
+  var active='all';
+  function apply(){
+    var q=(box&&box.value||'').toLowerCase().trim();
+    var shown=0;
+    rows.forEach(function(r){
+      var okF = active==='all' || r.dataset.sev===active ||
+                (active==='kev'&&r.dataset.kev==='1') ||
+                (active==='fixable'&&r.dataset.fixable==='1');
+      var okQ = !q || r.textContent.toLowerCase().indexOf(q)>-1;
+      var show = okF&&okQ;
+      r.classList.toggle('hidden',!show);
+      if(show) shown++;
+    });
+    if(empty) empty.classList.toggle('hidden',shown>0);
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      active=b.dataset.filter;
+      btns.forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+      apply();
+    });
+  });
+  if(box) box.addEventListener('input',apply);
+  apply();
+})();
+</script></body></html>

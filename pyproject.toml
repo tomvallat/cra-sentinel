@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cra-sentinel"
+version = "1.0.0"
+description = "EU Cyber Resilience Act compliance scanner: SBOM, actively-exploited detection, Article 14 evidence"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["cra", "cyber-resilience-act", "sbom", "cyclonedx", "spdx", "csaf", "vex", "compliance", "eu"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Legal Industry",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = []
+
+[project.scripts]
+cra = "cra_sentinel.cli:main"
+cra-sentinel = "cra_sentinel.cli:main"
+
+[project.urls]
+Homepage = "https://tomvallat.github.io/cra-sentinel/"
+Repository = "https://github.com/tomvallat/cra-sentinel"
+Issues = "https://github.com/tomvallat/cra-sentinel/issues"
+
+[tool.setuptools.packages.find]
+include = ["cra_sentinel*"]

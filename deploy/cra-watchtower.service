@@ -1,0 +1,43 @@
+[Unit]
+Description=CRA Sentinel Watchtower — portfolio sweep
+Documentation=https://github.com/your-org/cra-sentinel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=watchtower
+Group=watchtower
+WorkingDirectory=/var/lib/cra-watchtower
+
+# Credentials live here, mode 0600, owned by the service user. Never in the
+# config file, which you may well want to keep in your own git repository.
+EnvironmentFile=/etc/cra-watchtower/secrets.env
+Environment=CRA_WATCHTOWER_HOME=/var/lib/cra-watchtower
+
+ExecStart=/opt/cra-watchtower/venv/bin/cra watchtower run
+
+# A sweep exits 1 when something needs attention. That is a signal, not a
+# service failure, and systemd must not treat it as one.
+SuccessExitStatus=0 1
+
+TimeoutStartSec=1800
+Nice=10
+
+# The sweep reads client source trees and talks to two public APIs. It has no
+# business doing anything else.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/cra-watchtower
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+
+[Install]
+WantedBy=multi-user.target

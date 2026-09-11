@@ -1,0 +1,27 @@
+[Unit]
+Description=CRA Sentinel Watchtower — portfolio dashboard
+After=network-online.target
+
+[Service]
+Type=simple
+User=watchtower
+Group=watchtower
+WorkingDirectory=/var/lib/cra-watchtower
+Environment=CRA_WATCHTOWER_HOME=/var/lib/cra-watchtower
+
+# Loopback only. The dashboard shows your clients' vulnerability posture and
+# has no authentication of its own — put a reverse proxy in front of it.
+ExecStart=/opt/cra-watchtower/venv/bin/cra watchtower dashboard \
+    --host 127.0.0.1 --port 8788 --operator "Conformité produit"
+
+Restart=on-failure
+RestartSec=10
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/cra-watchtower
+
+[Install]
+WantedBy=multi-user.target

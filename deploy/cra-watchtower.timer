@@ -1,0 +1,17 @@
+[Unit]
+Description=Sweep the CRA portfolio every four hours
+Documentation=https://github.com/your-org/cra-sentinel
+
+[Timer]
+# Four hours is a deliberate choice, not a default. The Article 14 early
+# warning is due 24 hours after the manufacturer becomes aware; a six-sweep
+# day means the worst-case detection lag is 4 hours, leaving 20 hours to
+# decide and file. Tightening this below one hour mostly adds load: the CISA
+# KEV catalogue is not updated more often than daily in practice.
+OnCalendar=*-*-* 00,04,08,12,16,20:15:00
+RandomizedDelaySec=300
+Persistent=true
+Unit=cra-watchtower.service
+
+[Install]
+WantedBy=timers.target

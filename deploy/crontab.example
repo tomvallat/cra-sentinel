@@ -1,0 +1,15 @@
+# CRA Sentinel Watchtower — for hosts without systemd.
+#
+# Four sweeps a day bounds the detection lag at four hours, which leaves
+# twenty of the twenty-four-hour Article 14 window to decide and file.
+#
+#   crontab -u watchtower -e
+
+CRA_WATCHTOWER_HOME=/var/lib/cra-watchtower
+CRA_SMTP_PASSWORD=...
+PATH=/opt/cra-watchtower/venv/bin:/usr/bin:/bin
+
+15 0,4,8,12,16,20 * * *  cra watchtower run --quiet >> /var/log/cra-watchtower.log 2>&1
+
+# Weekly digest to yourself, so a silent portfolio still gets looked at.
+0 8 * * 1  cra watchtower status >> /var/log/cra-watchtower.log 2>&1

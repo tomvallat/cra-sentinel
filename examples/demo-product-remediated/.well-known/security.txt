@@ -1,0 +1,5 @@
+Contact: mailto:security@acme-industrial.eu
+Expires: 2027-09-10T00:00:00.000Z
+Preferred-Languages: en
+Policy: https://example.com/security
+# Published under Article 13(19) of Regulation (EU) 2024/2847
