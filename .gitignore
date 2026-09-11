@@ -21,3 +21,6 @@ docs/pdf/
 # Internal commercial material — never published
 docs/OFFRE-COMMERCIALE.md
 docs/CRA-Sentinel-Dossier.pdf
+
+# Local Claude Code settings — personal, not part of the project
+.claude/settings.local.json
