@@ -5,5 +5,5 @@ elements to inventory their components, handle vulnerabilities, and report
 actively exploited ones within 24 hours. This tool produces the evidence.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __all__ = ["__version__"]

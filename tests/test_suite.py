@@ -102,6 +102,47 @@ class TestDetectors(unittest.TestCase):
         self.assertEqual(len(components), 2)
         self.assertEqual(components[0].purl, "pkg:golang/github.com/gin-gonic/gin@v1.7.0")
 
+    def test_go_mod_marks_indirect_requirements(self):
+        path = self.write("go.mod", "module x\ngo 1.21\nrequire (\n"
+                                    "\tgithub.com/gin-gonic/gin v1.7.0\n"
+                                    "\tgolang.org/x/crypto v0.1.0 // indirect\n)\n")
+        by_name = {c.name: c for c in detectors.parse(path, self.dir)}
+        self.assertTrue(by_name["gin"].direct)
+        self.assertFalse(by_name["crypto"].direct,
+                         "// indirect must not be reported as a direct dependency")
+
+    def test_go_sum_keeps_only_the_selected_version(self):
+        # go.sum is a checksum database for the whole module graph. Every
+        # version it lists is not a version that ships.
+        path = self.write("go.sum",
+                          "golang.org/x/net v0.0.0-20180724234803-3673e40ba225 h1:aaa=\n"
+                          "golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:bbb=\n"
+                          "golang.org/x/net v0.0.0-20210525063256-abc453219eb5 h1:ccc=\n"
+                          "golang.org/x/net v0.17.0 h1:ddd=\n"
+                          "golang.org/x/text v0.3.0 h1:eee=\n")
+        components = detectors.parse(path, self.dir)
+        self.assertEqual(len(components), 2, "one component per module, not per line")
+        by_name = {c.name: c for c in components}
+        self.assertEqual(by_name["net"].version, "v0.17.0")
+        self.assertFalse(by_name["net"].direct)
+
+    def test_go_version_ordering(self):
+        key = detectors.go_version_key
+        self.assertGreater(key("v0.17.0"), key("v0.0.0-20210525063256-abc453219eb5"))
+        self.assertGreater(key("v0.0.0-20210525063256-abc"),
+                           key("v0.0.0-20180724234803-abc"))
+        self.assertGreater(key("v1.2.3"), key("v1.2.3-rc1"))
+        self.assertGreater(key("v2.0.0+incompatible"), key("v1.9.9"))
+        self.assertGreater(key("v1.10.0"), key("v1.9.0"))
+
+    def test_go_mod_outranks_go_sum_in_the_same_directory(self):
+        self.write("go.sum", "golang.org/x/net v0.17.0 h1:ddd=\n")
+        self.write("go.mod", "module x\ngo 1.21\nrequire golang.org/x/net v0.17.0\n")
+        found = [p.name for p in detectors.discover_manifests(self.dir)]
+        self.assertIn("go.mod", found)
+        self.assertNotIn("go.sum", found,
+                         "go.mod describes the build; go.sum describes the graph")
+
     def test_cargo_and_gemfile(self):
         cargo = self.write("Cargo.lock",
                            '[[package]]\nname = "serde"\nversion = "1.0.130"\n')

@@ -30,8 +30,8 @@ MANIFEST_FILES = {
     "Pipfile.lock": ("pypi", 10),
     "requirements.txt": ("pypi", 5),
     "pyproject.toml": ("pypi", 2),
-    "go.sum": ("golang", 9),
-    "go.mod": ("golang", 8),
+    "go.mod": ("golang", 9),
+    "go.sum": ("golang", 8),
     "Cargo.lock": ("cargo", 10),
     "Cargo.toml": ("cargo", 2),
     "composer.lock": ("composer", 10),
@@ -262,8 +262,9 @@ def parse_pyproject(text: str, src: str) -> list[Component]:
 
 def parse_go_mod(text: str, src: str) -> list[Component]:
     out, in_block = [], False
-    for line in text.splitlines():
-        line = line.split("//")[0].strip()
+    for raw in text.splitlines():
+        indirect = "// indirect" in raw
+        line = raw.split("//")[0].strip()
         if line.startswith("require ("):
             in_block = True
             continue
@@ -275,22 +276,52 @@ def parse_go_mod(text: str, src: str) -> list[Component]:
             module, version = m.group(1), m.group(2)
             ns, _, name = module.rpartition("/")
             out.append(Component(name=name, version=version, ecosystem="golang",
-                                 namespace=ns or None, source=src))
+                                 namespace=ns or None, direct=not indirect, source=src))
     return out
 
 
+def go_version_key(version: str) -> tuple:
+    """Order Go module versions the way the toolchain does.
+
+    Handles releases (v1.2.3), pre-releases (v1.2.3-rc1) and pseudo-versions
+    (v0.0.0-20210525063256-abc453219eb5), whose timestamp sorts lexically
+    within the same base version. A release outranks any pre-release of the
+    same base, per semver.
+    """
+    v = version.lstrip("v").split("+")[0]
+    base, _, pre = v.partition("-")
+    nums = []
+    for part in base.split(".")[:3]:
+        m = re.match(r"\d+", part)
+        nums.append(int(m.group(0)) if m else 0)
+    while len(nums) < 3:
+        nums.append(0)
+    return (nums[0], nums[1], nums[2], 0 if pre else 1, pre)
+
+
 def parse_go_sum(text: str, src: str) -> list[Component]:
-    seen, out = set(), []
+    """Resolve a go.sum to one version per module.
+
+    go.sum is a checksum database for the whole module graph, not a record of
+    what the build selected: it routinely lists a dozen versions of the same
+    module, most of which are never compiled in. Reporting them all inflates
+    the component count and, worse, attributes advisories to versions that do
+    not ship. Minimal version selection keeps the highest requirement, so the
+    highest version present is the closest honest approximation.
+    """
+    best: dict[str, str] = {}
     for line in text.splitlines():
         parts = line.split()
         if len(parts) >= 2 and parts[1].startswith("v"):
             module, version = parts[0], parts[1].replace("/go.mod", "")
-            if (module, version) in seen:
-                continue
-            seen.add((module, version))
-            ns, _, name = module.rpartition("/")
-            out.append(Component(name=name, version=version, ecosystem="golang",
-                                 namespace=ns or None, direct=False, source=src))
+            current = best.get(module)
+            if current is None or go_version_key(version) > go_version_key(current):
+                best[module] = version
+    out = []
+    for module, version in sorted(best.items()):
+        ns, _, name = module.rpartition("/")
+        out.append(Component(name=name, version=version, ecosystem="golang",
+                             namespace=ns or None, direct=False, source=src))
     return out
 
 

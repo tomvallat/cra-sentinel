@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cra-sentinel"
-version = "1.0.0"
+version = "1.0.1"
 description = "EU Cyber Resilience Act compliance scanner: SBOM, actively-exploited detection, Article 14 evidence"
 readme = "README.md"
 requires-python = ">=3.10"
