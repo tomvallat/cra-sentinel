@@ -24,3 +24,4 @@ docs/CRA-Sentinel-Dossier.pdf
 
 # Local Claude Code settings — personal, not part of the project
 .claude/settings.local.json
+prospection/
